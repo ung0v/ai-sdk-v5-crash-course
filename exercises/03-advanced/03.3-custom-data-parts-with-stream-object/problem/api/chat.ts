@@ -3,17 +3,17 @@ import {
   convertToModelMessages,
   createUIMessageStream,
   createUIMessageStreamResponse,
-  streamObject,
   streamText,
   type ModelMessage,
   type UIMessage,
 } from 'ai';
-import { z } from 'zod';
 
 export type MyMessage = UIMessage<
   never,
   {
-    suggestions: string[];
+    // TODO: Change the type to 'suggestions' and
+    // make it an array of strings
+    suggestion: string;
   }
 >;
 
@@ -36,11 +36,14 @@ export const POST = async (req: Request): Promise<Response> => {
 
       await streamTextResult.consumeStream();
 
-      const followupSuggestionsResult = streamObject({
+      // TODO: Change the stream to streamObject, since
+      // we'll need to use structured outputs to reliably
+      // generate multiple suggestions
+      const followupSuggestionsResult = streamText({
         model: google('gemini-2.0-flash'),
-        schema: z.object({
-          suggestions: z.array(z.string()),
-        }),
+        // TODO: Define the schema for the suggestions
+        // using zod
+        schema: TODO,
         messages: [
           ...modelMessages,
           {
@@ -50,21 +53,28 @@ export const POST = async (req: Request): Promise<Response> => {
           {
             role: 'user',
             content:
-              'What question should I ask next? Return an array of suggested questions.',
+              // TODO: Change the prompt to tell the LLM
+              // to return an array of suggestions
+              'What question should I ask next? Return only the question text.',
           },
         ],
       });
 
       const dataPartId = crypto.randomUUID();
 
-      for await (const chunk of followupSuggestionsResult.partialObjectStream) {
+      let fullSuggestion = '';
+
+      // TODO: Update this to iterate over the partialObjectStream
+      for await (const chunk of followupSuggestionsResult.textStream) {
+        fullSuggestion += chunk;
+
+        // TODO: Update this to write the data part
+        // with the suggestions array. You might need
+        // to filter out undefined suggestions.
         writer.write({
           id: dataPartId,
-          type: 'data-suggestions',
-          data:
-            chunk.suggestions?.filter(
-              (suggestion) => suggestion !== undefined,
-            ) ?? [],
+          type: 'data-suggestion',
+          data: fullSuggestion,
         });
       }
     },
