@@ -3,16 +3,17 @@ import {
   convertToModelMessages,
   createUIMessageStream,
   createUIMessageStreamResponse,
+  streamObject,
   streamText,
   type ModelMessage,
   type UIMessage,
 } from 'ai';
+import { z } from 'zod';
 
 export type MyMessage = UIMessage<
   never,
   {
-    // TODO: Define the type for the suggestion data part
-    TODO: TODO;
+    suggestions: string[];
   }
 >;
 
@@ -35,8 +36,11 @@ export const POST = async (req: Request): Promise<Response> => {
 
       await streamTextResult.consumeStream();
 
-      const followupSuggestionsResult = streamText({
+      const followupSuggestionsResult = streamObject({
         model: google('gemini-2.0-flash'),
+        schema: z.object({
+          suggestions: z.array(z.string()),
+        }),
         messages: [
           ...modelMessages,
           {
@@ -46,25 +50,22 @@ export const POST = async (req: Request): Promise<Response> => {
           {
             role: 'user',
             content:
-              'What question should I ask next? Return only the question text.',
+              'What question should I ask next? Return an array of suggested questions.',
           },
         ],
       });
 
-      // NOTE: Create an id for the data part
       const dataPartId = crypto.randomUUID();
 
-      // NOTE: Create a variable to store the full suggestion,
-      // since we need to store the full suggestion each time
-      let fullSuggestion = TODO;
-
-      for await (const chunk of followupSuggestionsResult.textStream) {
-        // TODO: Append the chunk to the full suggestion
-        fullSuggestion += TODO;
-
-        // TODO: Call writer.write and write the data part
-        // to the stream
-        TODO;
+      for await (const chunk of followupSuggestionsResult.partialObjectStream) {
+        writer.write({
+          id: dataPartId,
+          type: 'data-suggestions',
+          data:
+            chunk.suggestions?.filter(
+              (suggestion) => suggestion !== undefined,
+            ) ?? [],
+        });
       }
     },
   });
