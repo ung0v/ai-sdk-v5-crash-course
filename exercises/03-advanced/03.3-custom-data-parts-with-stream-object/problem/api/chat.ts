@@ -36,8 +36,8 @@ export const POST = async (req: Request): Promise<Response> => {
 
       await streamTextResult.consumeStream();
 
-      // TODO: Change the stream to streamObject, since
-      // we'll need to use structured outputs to reliably
+      // TODO: Change the streamText call to streamObject,
+      // since we'll need to use structured outputs to reliably
       // generate multiple suggestions
       const followupSuggestionsResult = streamText({
         model: google('gemini-2.0-flash'),
