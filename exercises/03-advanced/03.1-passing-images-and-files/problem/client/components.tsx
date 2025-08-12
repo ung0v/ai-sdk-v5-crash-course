@@ -12,7 +12,7 @@ export const Wrapper = (props: {
   children: React.ReactNode;
 }) => {
   return (
-    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
+    <div className="flex flex-col w-full max-w-xl py-24 mx-auto stretch">
       {props.children}
     </div>
   );
