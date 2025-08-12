@@ -22,7 +22,6 @@ export const POST = async (req: Request): Promise<Response> => {
   const startTime = TODO;
 
   return result.toUIMessageStreamResponse<MyUIMessage>({
-    originalMessages: messages,
     // TODO: Add the messageMetadata function here
     // If it encounters a 'finish' part, it should return the duration
     // of the stream in milliseconds

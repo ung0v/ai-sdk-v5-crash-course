@@ -21,7 +21,6 @@ export const POST = async (req: Request): Promise<Response> => {
   const startTime = Date.now();
 
   return result.toUIMessageStreamResponse<MyUIMessage>({
-    originalMessages: messages,
     messageMetadata({ part }) {
       if (part.type === 'finish') {
         return {
