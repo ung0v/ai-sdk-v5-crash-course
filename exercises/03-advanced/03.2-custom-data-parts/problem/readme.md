@@ -30,7 +30,7 @@ The base `UIMessage` type has support for various different message parts like:
 - sources
 - tool calls and results
 
-But here, our plan is to extend it and create a new data part called `data-suggestion`, which will have a single suggestion for what the user should ask next.
+But here, our plan is to extend it and create a new data part called `data-suggestion`, which will have a single suggestion for what the user should ask next. Check the [reference material](/exercises/99-reference/99.4-custom-data-parts-streaming/explainer/readme.md) for more information.
 
 ## Creating a Custom Message Stream
 
@@ -57,6 +57,8 @@ const stream = createUIMessageStream<MyMessage>({
   },
 });
 ```
+
+`consumeStream` allows us to consume the stream until it's fully read, which is useful for ensuring that the stream finishes. Check out the [reference material](/exercises/99-reference/99.3-consume-stream/explainer.1/readme.md) for more information.
 
 ## Streaming a Suggestion
 
@@ -104,7 +106,7 @@ for await (const chunk of followupSuggestionsResult.textStream) {
 }
 ```
 
-First, we create an ID for the data part: `dataPartId`
+First, we create an ID for the data part: `dataPartId`.
 
 Then we create a variable to store the full suggestion, since we need to accumulate the full suggestion text as it streams in.
 
@@ -112,9 +114,14 @@ We iterate over the text stream (`followupSuggestionsResult.textStream`), append
 
 At this point, we'll be streaming our suggestion down once the initial response has completed.
 
-## Showing the Suggestion in the Front End
+Check these two reference materials for more information:
 
-Our next job is to show it in the front end. Here's how the code looks now:
+- [Streaming Custom Data Parts To The Frontend](/exercises/99-reference/99.5-custom-data-parts-stream-to-frontend/explainer/readme.md)
+- [Why IDs Are Needed For Custom Data Parts](/exercises/99-reference/99.6-custom-data-parts-id-reconciliation/explainer/readme.md)
+
+## Showing the Suggestion in the Frontend
+
+Our next job is to show it in the frontend. Here's how the code looks now:
 
 ```tsx
 const App = () => {
@@ -157,7 +164,7 @@ const App = () => {
 };
 ```
 
-In `latestSuggestion`, we need to get the suggestion from the last message by finding a part with a type of `data-suggestion`.This will give us a `string` or `undefined` (since the data suggestion might not have streamed yet or we might not have any messages yet).
+In `latestSuggestion`, we need to get the suggestion from the last message by finding a part with a type of `data-suggestion`. This will give us a `string` or `undefined` (since the data suggestion might not have streamed yet or we might not have any messages yet).
 
 We then take that latest suggestion and put it inside the `ChatInput` component, where it will display as a button.
 
@@ -169,12 +176,15 @@ Good luck, and I'll see you in the solution.
 
 ## Steps To Complete
 
-- [ ] Define the type for the suggestion data part in the `MyMessage` type in [`chat.ts`](./api/chat.ts)
+- [ ] Define the type for the suggestion data part in the `MyMessage` type in [`chat.ts`](./api/chat.ts). Check the [reference material](/exercises/99-reference/99.4-custom-data-parts-streaming/explainer/readme.md) for more information.
 
 - [ ] Complete the implementation of the suggestion streaming by:
   - Initializing the `fullSuggestion` variable as an empty string
   - Appending each chunk to `fullSuggestion` in the loop
   - Using `writer.write` to write the data part with the accumulated suggestion
+  - Use the reference material if needed:
+    - [Streaming Custom Data Parts To The Frontend](/exercises/99-reference/99.5-custom-data-parts-stream-to-frontend/explainer/readme.md)
+    - [Why IDs Are Needed For Custom Data Parts](/exercises/99-reference/99.6-custom-data-parts-id-reconciliation/explainer/readme.md)
 
 - [ ] In the [`root.tsx`](./client/root.tsx) file, implement the `latestSuggestion` by extracting it from the last message:
 
