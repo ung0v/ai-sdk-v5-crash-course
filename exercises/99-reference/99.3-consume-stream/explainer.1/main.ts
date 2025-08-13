@@ -12,6 +12,6 @@ const streamTextResult = streamText({
 });
 
 // Try commenting this out and see what happens!
-// await streamTextResult.consumeStream();
+await streamTextResult.consumeStream();
 
 console.log('Process exiting...');
