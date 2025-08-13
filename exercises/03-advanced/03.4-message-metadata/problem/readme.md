@@ -32,9 +32,9 @@ The `messageMetadata` callback gets called on every single text part, and when w
 
 We need to capture the start time of the stream so we can calculate how long it took to complete.
 
-## Updating the Front End Code
+## Updating the Frontend Code
 
-In the front end code, we also need to make changes. We need to update the type for the `metadata` parameter:
+In the frontend code, we also need to make changes. We need to update the type for the `metadata` parameter:
 
 ```tsx
 // problem/client/components.tsx
