@@ -1,5 +1,5 @@
-Make the CLI listen for `n` to go to the next exercise, `p` to go to the previous exercise, and `enter` to ask for a list of exercises.
+Add a piece of reference material for declaring message metadata.
 
 ---
 
-Make `pnpm dev` run the exercise CLI.
+Add some reference material for streaming custom data parts as well as with stream object calls.
