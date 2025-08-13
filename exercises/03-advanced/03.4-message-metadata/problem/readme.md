@@ -32,6 +32,8 @@ The `messageMetadata` callback gets called on every single text part, and when w
 
 We need to capture the start time of the stream so we can calculate how long it took to complete.
 
+Check the [reference material](/exercises/99-reference/99.8-message-metadata/explainer/readme.md) for more information.
+
 ## Updating the Frontend Code
 
 In the frontend code, we also need to make changes. We need to update the type for the `metadata` parameter:
