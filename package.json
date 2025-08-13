@@ -1,7 +1,8 @@
 {
-  "name": "ai-typescript-toolkit",
+  "name": "ai-sdk-5-tutorial",
   "version": "1.0.0",
-  "description": "",
+  "description": "Companion repository for the AI SDK v5 tutorial on aihero.dev",
+  "repository": "https://github.com/ai-hero-dev/ai-sdk-5-tutorial",
   "type": "module",
   "scripts": {
     "exercise": "tsx internal/cli.ts",
@@ -11,7 +12,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "GPL-2",
   "imports": {
     "#shared/*": "./shared/*"
   },

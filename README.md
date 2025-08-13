@@ -1,6 +1,6 @@
-# AI SDK v5 Tutorial - Companion Repository
+# AI SDK v5 Tutorial
 
-🚀 **The AI SDK v5 is here, and it's a game-changer!** This repository contains all the code examples and exercises from our comprehensive AI SDK v5 tutorial available on [aihero.dev](https://aihero.dev).
+🚀 **The AI SDK v5 is here, and it's incredible.** This repository contains all the code examples and exercises from our free, comprehensive AI SDK v5 tutorial available on [aihero.dev](https://aihero.dev).
 
 AI SDK v5 brings revolutionary improvements to building AI applications with TypeScript. I think of it as the missing standard library for building AI apps.
 
