@@ -53,23 +53,15 @@ cp .env.example .env
 
 ## 📚 Running the Exercises
 
-Each exercise corresponds to a section in the tutorial. Run them with:
+Start by running `pnpm dev`:
 
 ```bash
-pnpm run exercise <exercise-number>
+pnpm dev
 ```
 
-**Example:**
+This will allow you to choose between the different exercises.
 
-```bash
-pnpm run exercise 01.1
-```
-
-This will:
-
-- Find the exercise across all sections
-- Let you choose between `problem` (your turn to code) or `solution` (completed version)
-- Execute the exercise code
+You can also run `pnpm exercise <exercise-number>` to run a specific exercise.
 
 ## 📁 Repository Structure
 
