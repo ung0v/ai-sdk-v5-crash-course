@@ -49,6 +49,7 @@
     "react-dom": "^19.1.0",
     "react-markdown": "^10.1.0",
     "react-router": "^7.7.0",
+    "redis": "^5.8.1",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.8.3",
     "vite": "^7.0.2",
