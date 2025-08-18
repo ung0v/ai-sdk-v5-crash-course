@@ -18,8 +18,8 @@ export namespace DB {
   }
 
   export interface PersistenceData {
-    chats: DB.Chat[];
-    streams: DB.Stream[];
+    chats: Record<string, DB.Chat>;
+    streams: Record<string, DB.Stream>;
   }
 }
 
@@ -41,7 +41,7 @@ async function ensureDataDirectory(): Promise<void> {
     await fs.mkdir(dataDir, { recursive: true });
     await fs.writeFile(
       DB_FILE_PATH,
-      JSON.stringify({ chats: [], streams: [] }, null, 2),
+      JSON.stringify({ chats: {}, streams: {} }, null, 2),
       'utf-8',
     );
   }
@@ -53,7 +53,7 @@ export async function loadData(): Promise<DB.PersistenceData> {
     const data = await fs.readFile(DB_FILE_PATH, 'utf-8');
     return JSON.parse(data);
   } catch (error) {
-    return { chats: [], streams: [] };
+    return { chats: {}, streams: {} };
   }
 }
 
@@ -62,7 +62,7 @@ export async function loadData(): Promise<DB.PersistenceData> {
  */
 export async function loadChats(): Promise<DB.Chat[]> {
   const data = await loadData();
-  return data.chats || [];
+  return Object.values(data.chats) || [];
 }
 
 /**
@@ -102,7 +102,7 @@ export async function createChat(
   };
 
   await modifyDatabase((data) => {
-    data.chats.push(newChat);
+    data.chats[id] = newChat;
   });
 
   return newChat;
@@ -114,8 +114,8 @@ export async function createChat(
 export async function getChat(
   chatId: string,
 ): Promise<DB.Chat | null> {
-  const chats = await loadChats();
-  return chats.find((chat) => chat.id === chatId) || null;
+  const data = await loadData();
+  return data.chats[chatId] || null;
 }
 
 /**
@@ -125,24 +125,21 @@ export async function appendToChatMessages(
   chatId: string,
   messages: UIMessage[],
 ): Promise<DB.Chat | null> {
-  const chats = await loadChats();
-  const chatIndex = chats.findIndex(
-    (chat) => chat.id === chatId,
-  );
+  const data = await loadData();
 
-  if (chatIndex === -1) {
+  if (!data.chats[chatId]) {
     return null;
   }
 
-  const data = await modifyDatabase((data) => {
-    data.chats[chatIndex]!.messages = [
-      ...data.chats[chatIndex]!.messages,
+  const updatedData = await modifyDatabase((data) => {
+    data.chats[chatId]!.messages = [
+      ...data.chats[chatId]!.messages,
       ...messages,
     ];
-    data.chats[chatIndex]!.updatedAt = new Date().toISOString();
+    data.chats[chatId]!.updatedAt = new Date().toISOString();
   });
 
-  return data.chats[chatIndex]!;
+  return updatedData.chats[chatId]!;
 }
 
 /**
@@ -151,14 +148,15 @@ export async function appendToChatMessages(
 export async function deleteChat(
   chatId: string,
 ): Promise<boolean> {
-  const initialLength = (await loadChats()).length;
-  const data = await modifyDatabase((data) => {
-    data.chats = data.chats.filter((chat) => chat.id !== chatId);
-  });
+  const data = await loadData();
 
-  if (data.chats.length === initialLength) {
+  if (!data.chats[chatId]) {
     return false; // Chat not found
   }
+
+  await modifyDatabase((data) => {
+    delete data.chats[chatId];
+  });
 
   return true;
 }
@@ -178,7 +176,7 @@ export async function createStream(
   };
 
   await modifyDatabase((data) => {
-    data.streams.push(newStream);
+    data.streams[newStream.id] = newStream;
   });
 
   return newStream;
@@ -189,7 +187,7 @@ export async function createStream(
  */
 async function loadAllStreams(): Promise<DB.Stream[]> {
   const data = await loadData();
-  return data.streams || [];
+  return Object.values(data.streams) || [];
 }
 
 export async function loadStreamsByChatId(
@@ -205,8 +203,6 @@ export async function loadStreamsByChatId(
 export async function getStream(
   streamId: string,
 ): Promise<DB.Stream | null> {
-  const streams = await loadAllStreams();
-  return (
-    streams.find((stream) => stream.id === streamId) || null
-  );
+  const data = await loadData();
+  return data.streams[streamId] || null;
 }

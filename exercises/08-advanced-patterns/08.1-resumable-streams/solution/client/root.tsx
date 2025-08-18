@@ -10,7 +10,6 @@ import type { DB } from '../api/persistence-layer.ts';
 import { ChatInput, Message, Wrapper } from './components.tsx';
 import './tailwind.css';
 import { BrowserRouter, useSearchParams } from 'react-router';
-import { DefaultChatTransport } from 'ai';
 
 const App = () => {
   const [backupChatId, setBackupChatId] = useState(
@@ -33,7 +32,7 @@ const App = () => {
     },
   });
 
-  const { messages, sendMessage, resumeStream } = useChat({
+  const { messages, sendMessage } = useChat({
     id: chatIdFromSearchParams ?? backupChatId,
     messages: data?.messages ?? [],
   });
