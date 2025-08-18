@@ -18,8 +18,6 @@ export const POST = async (req: Request): Promise<Response> => {
     parentMessageId: string | null;
   } = await req.json();
 
-  console.dir(body, { depth: null });
-
   const { message: userMessage, id, parentMessageId } = body;
 
   let chat = await getChat(id);

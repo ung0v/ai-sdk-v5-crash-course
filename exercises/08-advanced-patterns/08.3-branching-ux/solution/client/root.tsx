@@ -74,19 +74,50 @@ const App = () => {
     `Who's the best football player in the world?`,
   );
 
+  const [editingMessageId, setEditingMessageId] = useState<
+    string | null
+  >(null);
+
   return (
     <Wrapper>
-      {messages.map((message) => (
-        <Message
-          key={message.id}
-          role={message.role}
-          parts={message.parts}
-        />
-      ))}
+      {messages.map((message, index, array) => {
+        const prevMessage = array[index - 1];
+        return (
+          <Message
+            key={message.id}
+            role={message.role}
+            parts={message.parts}
+            onPressEdit={() => {
+              if (editingMessageId === message.id) {
+                setEditingMessageId(null);
+              } else {
+                setEditingMessageId(message.id);
+              }
+            }}
+            onEditSubmit={(editedText) => {
+              sendMessage(
+                {
+                  messageId: message.id,
+                  text: editedText,
+                },
+                {
+                  body: {
+                    id: chatIdFromSearchParams ?? backupChatId,
+                    parentMessageId: prevMessage?.id ?? null,
+                  },
+                },
+              );
+              setEditingMessageId(null);
+            }}
+            isEditing={editingMessageId === message.id}
+          />
+        );
+      })}
       <ChatInput
         input={input}
         onChange={(e) => setInput(e.target.value)}
         onSubmit={(e) => {
+          setEditingMessageId(null);
           e.preventDefault();
           sendMessage(
             {

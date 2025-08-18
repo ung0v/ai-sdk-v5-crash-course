@@ -1,5 +1,5 @@
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 export const Wrapper = (props: {
@@ -15,9 +15,15 @@ export const Wrapper = (props: {
 export const Message = ({
   role,
   parts,
+  onPressEdit,
+  isEditing,
+  onEditSubmit,
 }: {
   role: string;
   parts: UIMessagePart<UIDataTypes, UITools>[];
+  onPressEdit: () => void;
+  onEditSubmit: (editedText: string) => void;
+  isEditing: boolean;
 }) => {
   const prefix = role === 'user' ? 'User: ' : 'AI: ';
 
@@ -29,9 +35,51 @@ export const Message = ({
       return '';
     })
     .join('');
+
+  const [editedText, setEditedText] = useState(text);
+
+  useEffect(() => {
+    if (!isEditing) {
+      setEditedText(text);
+    }
+  }, [text, isEditing]);
+
   return (
     <div className="prose prose-invert my-6">
-      <ReactMarkdown>{prefix + text}</ReactMarkdown>
+      {isEditing ? (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            onEditSubmit(editedText);
+          }}
+        >
+          <input
+            type="text"
+            value={editedText}
+            onChange={(e) => setEditedText(e.target.value)}
+            autoFocus
+            className="bg-gray-800 text-white px-3 py-1 rounded-md w-full block mb-2"
+          />
+          <button
+            type="submit"
+            className="bg-gray-700 text-white px-3 py-1 rounded-md text-sm"
+          >
+            Save
+          </button>
+        </form>
+      ) : (
+        <div>
+          <ReactMarkdown>{prefix + text}</ReactMarkdown>
+          {role === 'user' && (
+            <button
+              onClick={onPressEdit}
+              className="text-sm text-zinc-200 bg-gray-700 px-3 py-1 rounded-md"
+            >
+              Edit
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 };
