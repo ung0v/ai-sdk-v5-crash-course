@@ -2,13 +2,9 @@ import { useChat } from '@ai-sdk/react';
 import {
   QueryClient,
   QueryClientProvider,
-  useSuspenseQuery,
 } from '@tanstack/react-query';
-import React, {
-  startTransition,
-  useEffect,
-  useState,
-} from 'react';
+import { type UIMessage } from 'ai';
+import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   BrowserRouter,
@@ -17,12 +13,14 @@ import {
 } from 'react-router';
 import type { DB } from '../api/persistence-layer.ts';
 import { ChatInput, Message, Wrapper } from './components.tsx';
+import { sendOnlyLastMessageTransport } from './send-only-last-message-transport.ts';
 import './tailwind.css';
-import { DefaultChatTransport, type UIMessage } from 'ai';
+import { useChatCacheManager } from './use-chat-cache-manager.ts';
+import { useFetchChat } from './use-fetch-chat.ts';
 import {
   constructMessageHistoryFromMessageMap,
   constructReversedMessageMap,
-  DEFAULT_ROOT_MESSAGE_ID,
+  getBranchesOfMessage,
 } from './utils.ts';
 
 const queryClient = new QueryClient();
@@ -50,40 +48,10 @@ type State = (
 ) &
   CommonState;
 
-/**
- * We need complete control over when useChat's cache gets cleared.
- *
- * For that, we use a random UUID as the id for the useChat hook.
- *
- * We then clear the cache by setting a new random UUID.
- *
- * This way, we can control when the cache gets cleared.
- */
-const useChatCacheClearer = () => {
-  const [id, setId] = useState(() => crypto.randomUUID());
-
-  return {
-    hash: id,
-    clear: () => {
-      /**
-       * We wrap this in requestIdleCallback so that we can
-       * call it after the current event loop has finished.
-       *
-       * This means you can call it after navigate() and it
-       * will be guaranteed to be called after the navigation
-       * has completed - meaning the new chat id is set.
-       */
-      requestIdleCallback(() => {
-        setId(crypto.randomUUID());
-      });
-    },
-  };
-};
-
 const DEFAULT_CHAT_INPUT = `Who's the best football player in the world?`;
 
 const App = () => {
-  const useChatCache = useChatCacheClearer();
+  const useChatCache = useChatCacheManager();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -96,26 +64,7 @@ const App = () => {
   const messageIdFromSearchParams =
     searchParams.get('messageId');
 
-  const { data } = useSuspenseQuery({
-    queryKey: ['chat', chatIdFromSearchParams],
-    staleTime: Infinity,
-    queryFn: () => {
-      if (!chatIdFromSearchParams) {
-        return null;
-      }
-
-      return fetch(
-        `/api/get-chat?chatId=${chatIdFromSearchParams}`,
-      ).then(
-        (
-          res,
-        ): Promise<{
-          chat: DB.Chat;
-          messageMap: Record<string, DB.Message>;
-        }> => res.json(),
-      );
-    },
-  });
+  const data = useFetchChat(chatIdFromSearchParams);
 
   const reversedMessageMap = constructReversedMessageMap(
     data?.messageMap ?? {},
@@ -131,43 +80,8 @@ const App = () => {
     useChat<UIMessage>({
       id: useChatCache.hash,
       messages: initialMessages,
-      transport: new DefaultChatTransport({
-        prepareSendMessagesRequest: (opts) => {
-          const lastMessage =
-            opts.messages[opts.messages.length - 1];
-
-          return {
-            body: {
-              ...opts.body,
-              message: lastMessage,
-            },
-            api: '/api/chat',
-          };
-        },
-      }),
+      transport: sendOnlyLastMessageTransport,
     });
-
-  // Keep the message map in sync with the messages
-  useEffect(() => {
-    const messageMap = data?.messageMap ?? {};
-
-    messages.forEach((message, index) => {
-      const previousMessage = messages[index - 1];
-
-      messageMap[message.id] = {
-        ...message,
-        chatId,
-        createdAt:
-          data?.messageMap?.[message.id]?.createdAt ??
-          new Date().toISOString(),
-        parentMessageId: previousMessage?.id ?? null,
-      };
-    });
-
-    queryClient.setQueryData(['chat', chatIdFromSearchParams], {
-      messageMap,
-    });
-  }, [messages]);
 
   const [state, setState] = useState<State>(
     chatIdFromSearchParams
@@ -187,7 +101,13 @@ const App = () => {
       ? state.backupChatId
       : chatIdFromSearchParams!;
 
-  const sendMessageWithExtraData = (opts: {
+  useKeepMessageMapInSync({
+    messageMap: data?.messageMap ?? {},
+    messages,
+    chatId,
+  });
+
+  const sendMessageWithBody = (opts: {
     message: string;
     parentMessageId: string | null;
   }) => {
@@ -209,45 +129,41 @@ const App = () => {
       {messages.map((message, index, array) => {
         const prevMessage = array[index - 1];
 
-        const allMessagesAtThisStage = (
-          reversedMessageMap[
-            prevMessage?.id ?? DEFAULT_ROOT_MESSAGE_ID
-          ] ?? [message]
-        ).toReversed();
+        const allBranches = getBranchesOfMessage({
+          message,
+          reversedMessageMap,
+          parentMessageId: prevMessage?.id ?? null,
+        })
+          // We want to reverse them so that the most
+          // recent message (let's say 5) displays
+          // at the end of the array (5/5)
+          .toReversed();
 
-        const messageIndexWithinAllMessagesAtThisStage =
-          allMessagesAtThisStage.findIndex(
-            (m) => m.id === message.id,
-          );
+        const branchIndex = allBranches.findIndex(
+          (m) => m.id === message.id,
+        );
 
-        const previousMessageAttemptId =
-          allMessagesAtThisStage[
-            messageIndexWithinAllMessagesAtThisStage - 1
-          ]?.id;
+        const previousBranchId =
+          allBranches[branchIndex - 1]?.id;
 
-        const nextMessageAttemptId =
-          allMessagesAtThisStage[
-            messageIndexWithinAllMessagesAtThisStage + 1
-          ]?.id;
+        const nextBranchId = allBranches[branchIndex + 1]?.id;
 
         return (
           <Message
-            onPressPrevious={() => {
+            onPressPreviousBranch={() => {
               navigate(
-                `/?chatId=${chatIdFromSearchParams}&messageId=${previousMessageAttemptId}`,
+                `/?chatId=${chatIdFromSearchParams}&messageId=${previousBranchId}`,
               );
               useChatCache.clear();
             }}
-            onPressNext={() => {
+            onPressNextBranch={() => {
               navigate(
-                `/?chatId=${chatIdFromSearchParams}&messageId=${nextMessageAttemptId}`,
+                `/?chatId=${chatIdFromSearchParams}&messageId=${nextBranchId}`,
               );
               useChatCache.clear();
             }}
-            messageIndex={
-              messageIndexWithinAllMessagesAtThisStage
-            }
-            allMessagesCount={allMessagesAtThisStage.length}
+            branchIndex={branchIndex}
+            allBranchesCount={allBranches.length}
             key={message.id}
             role={message.role}
             parts={message.parts}
@@ -260,7 +176,7 @@ const App = () => {
             }}
             onEditSubmit={(editedText) => {
               setMessages(messages.slice(0, index));
-              sendMessageWithExtraData({
+              sendMessageWithBody({
                 message: editedText,
                 parentMessageId: prevMessage?.id ?? null,
               });
@@ -285,7 +201,7 @@ const App = () => {
           e.preventDefault();
 
           // Send the message to /api/chat
-          sendMessageWithExtraData({
+          sendMessageWithBody({
             message: state.mainInput,
             parentMessageId:
               messages[messages.length - 1]?.id ?? null,
@@ -317,3 +233,44 @@ root.render(
     </BrowserRouter>
   </QueryClientProvider>,
 );
+
+/**
+ * Since we have two stores of state, we need to keep them in sync.
+ *
+ * We do this by keeping the one which changes less frequently (React Query)
+ * in sync with the one which changes more frequently (useChat).
+ *
+ * Ideally we would store these in a single store - but since both
+ * stores are in third-party libraries, we need to keep them in sync
+ * manually.
+ */
+const useKeepMessageMapInSync = (opts: {
+  messageMap: Record<string, DB.Message>;
+  messages: UIMessage[];
+  chatId: string;
+}) => {
+  // Keep the message map in sync with the messages
+  useEffect(() => {
+    const messageMap = opts.messageMap ?? {};
+
+    opts.messages.forEach((message, index) => {
+      const previousMessage = opts.messages[index - 1];
+
+      messageMap[message.id] = {
+        ...message,
+        chatId: opts.chatId,
+        createdAt:
+          messageMap?.[message.id]?.createdAt ??
+          new Date().toISOString(),
+        parentMessageId: previousMessage?.id ?? null,
+      };
+    });
+
+    queryClient.setQueryData(['chat', opts.chatId], {
+      messageMap,
+    });
+  }, [
+    // Will only re-run when messages changes length
+    opts.messages.length,
+  ]);
+};

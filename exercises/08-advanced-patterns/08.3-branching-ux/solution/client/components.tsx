@@ -19,20 +19,20 @@ export const Message = ({
   onPressEdit,
   isEditing,
   onEditSubmit,
-  messageIndex,
-  allMessagesCount,
-  onPressPrevious,
-  onPressNext,
+  branchIndex,
+  allBranchesCount,
+  onPressPreviousBranch,
+  onPressNextBranch,
 }: {
   role: string;
   parts: UIMessagePart<UIDataTypes, UITools>[];
   onPressEdit: () => void;
   onEditSubmit: (editedText: string) => void;
   isEditing: boolean;
-  messageIndex: number;
-  allMessagesCount: number;
-  onPressPrevious: () => void;
-  onPressNext: () => void;
+  branchIndex: number;
+  allBranchesCount: number;
+  onPressPreviousBranch: () => void;
+  onPressNextBranch: () => void;
 }) => {
   const prefix = role === 'user' ? 'User: ' : 'AI: ';
 
@@ -83,23 +83,23 @@ export const Message = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <button
-                  onClick={onPressPrevious}
+                  aria-label="Previous branch"
+                  onClick={onPressPreviousBranch}
                   className="text-sm text-zinc-200 px-2 py-1 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={messageIndex === 0}
+                  disabled={branchIndex === 0}
                 >
                   <ChevronLeft />
                 </button>
                 <div className="text-sm text-zinc-200">
                   <span>
-                    {messageIndex + 1} / {allMessagesCount}
+                    {branchIndex + 1} / {allBranchesCount}
                   </span>
                 </div>
                 <button
-                  onClick={onPressNext}
+                  aria-label="Next branch"
+                  onClick={onPressNextBranch}
                   className="text-sm text-zinc-200 px-3 py-1 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={
-                    messageIndex === allMessagesCount - 1
-                  }
+                  disabled={branchIndex === allBranchesCount - 1}
                 >
                   <ChevronRight />
                 </button>
