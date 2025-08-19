@@ -6,11 +6,14 @@ Add reference for `setMessages`
 Add reference for `useChatCacheClearer`
 Add reference for sending only the latest message using `DefaultChatTransport` and `prepareSendMessagesRequest`
 
+Move this to a separate repo
+
 ---
 
 **Advanced Patterns**
 
 Add guardrails exercise
+Figure out what other exercises to add to this section
 
 ---
 
