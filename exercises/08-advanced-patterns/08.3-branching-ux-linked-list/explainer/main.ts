@@ -1,4 +1,3 @@
-import type { UIMessage } from 'ai';
 import {
   constructMessageHistoryFromMessageMap,
   constructReversedMessageMap,
@@ -8,8 +7,21 @@ import { styleText } from 'util';
 
 // SETUP
 
+/**
+ * We're using a Map to store the messages.
+ *
+ * The key is the message id and the value is the message.
+ *
+ * ![](./message-map.png)
+ */
 const messageMap: Record<string, DBMessage> = {};
 
+/**
+ * We're using a Linked List approach to store
+ * the messages.
+ *
+ * ![](./linked-list.png)
+ */
 const createMessage = async (
   parentMessageId: string | null,
   role: 'user' | 'assistant',
@@ -79,7 +91,8 @@ const message4Alternative = await createMessage(
 );
 
 /**
- * Change this to see the different branches
+ * This is the entrypoint message id used to
+ * construct the message history.
  *
  * null
  * message1.id
@@ -89,17 +102,24 @@ const message4Alternative = await createMessage(
  * message3Alternative.id
  * message4Alternative.id
  */
-const ENTRYPOINT_MESSAGE_ID: string | null = message1.id;
+const ENTRYPOINT_MESSAGE_ID: string | null = null;
 
 /** PLAYGROUND END ************************************************** */
 
-// Create a reversed message map for efficient lookups
+/**
+ * We create a reversed message map to be able to
+ * efficiently get the branches of a message.
+ *
+ * ![](./reversed-message-map.png)
+ */
 const reversedMessageMap =
   constructReversedMessageMap(messageMap);
 
-console.dir(messageMap, { depth: null });
-
-// Create the entire message history, using the entrypoint message id
+/**
+ * Create the entire message history, using the entrypoint message id
+ *
+ * ![](./message-history.png)
+ */
 const messageHistory = constructMessageHistoryFromMessageMap(
   ENTRYPOINT_MESSAGE_ID,
   messageMap,
