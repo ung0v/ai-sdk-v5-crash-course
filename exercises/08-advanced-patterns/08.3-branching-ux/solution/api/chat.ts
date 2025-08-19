@@ -9,7 +9,10 @@ import {
   createChat,
   getChat,
 } from './persistence-layer.ts';
-import { constructMessageHistoryFromMessageMap } from '../client/utils.ts';
+import {
+  constructMessageHistoryFromMessageMap,
+  constructReversedMessageMap,
+} from '../client/utils.ts';
 
 export const POST = async (req: Request): Promise<Response> => {
   const body: {
@@ -45,10 +48,15 @@ export const POST = async (req: Request): Promise<Response> => {
     chat.messageMap[newMessage.id] = newMessage;
   }
 
+  const reversedMessageMap = constructReversedMessageMap(
+    chat.messageMap,
+  );
+
   const fullMessageHistory: UIMessage[] =
     constructMessageHistoryFromMessageMap(
       userMessage.id,
       chat.messageMap,
+      reversedMessageMap,
     );
 
   console.dir(fullMessageHistory, { depth: null });

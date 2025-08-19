@@ -20,6 +20,10 @@ Add branching UX exercise
     - Generate the new message
     - On finish, link it to the message before it
 
+Got pretty far with branching, now I just need to figure out the frontend state and how we represent the messages we have selected in the search params.
+
+I think probably we can just use a single messageId in the search params. Then we can construct the linked list in both directions from that single message id. Buttons to go to the next and previous messages would simply update the search param.
+
 ---
 
 **Observability**

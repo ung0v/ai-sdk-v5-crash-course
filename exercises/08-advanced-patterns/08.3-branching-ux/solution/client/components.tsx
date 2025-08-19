@@ -1,4 +1,5 @@
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
@@ -18,12 +19,20 @@ export const Message = ({
   onPressEdit,
   isEditing,
   onEditSubmit,
+  messageIndex,
+  allMessagesCount,
+  onPressPrevious,
+  onPressNext,
 }: {
   role: string;
   parts: UIMessagePart<UIDataTypes, UITools>[];
   onPressEdit: () => void;
   onEditSubmit: (editedText: string) => void;
   isEditing: boolean;
+  messageIndex: number;
+  allMessagesCount: number;
+  onPressPrevious: () => void;
+  onPressNext: () => void;
 }) => {
   const prefix = role === 'user' ? 'User: ' : 'AI: ';
 
@@ -71,12 +80,37 @@ export const Message = ({
         <div>
           <ReactMarkdown>{prefix + text}</ReactMarkdown>
           {role === 'user' && (
-            <button
-              onClick={onPressEdit}
-              className="text-sm text-zinc-200 bg-gray-700 px-3 py-1 rounded-md"
-            >
-              Edit
-            </button>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={onPressPrevious}
+                  className="text-sm text-zinc-200 px-2 py-1 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={messageIndex === 0}
+                >
+                  <ChevronLeft />
+                </button>
+                <div className="text-sm text-zinc-200">
+                  <span>
+                    {messageIndex + 1} / {allMessagesCount}
+                  </span>
+                </div>
+                <button
+                  onClick={onPressNext}
+                  className="text-sm text-zinc-200 px-3 py-1 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={
+                    messageIndex === allMessagesCount - 1
+                  }
+                >
+                  <ChevronRight />
+                </button>
+              </div>
+              <button
+                onClick={onPressEdit}
+                className="text-sm text-zinc-200 bg-gray-700 px-3 py-1 rounded-md"
+              >
+                Edit
+              </button>
+            </div>
           )}
         </div>
       )}

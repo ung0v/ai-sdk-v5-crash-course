@@ -111,6 +111,13 @@ export async function createChat(
   };
 
   await modifyDatabase((data) => {
+    if (data.chats[id]) {
+      throw new Error('Chat already exists');
+    }
+    if (data.messages[initialMessage.id]) {
+      throw new Error('Message already exists');
+    }
+
     data.chats[id] = newChat;
 
     data.messages[initialMessage.id] = {
@@ -164,6 +171,9 @@ export async function addMessage(opts: {
   }
 
   const updatedData = await modifyDatabase((data) => {
+    if (data.messages[opts.message.id]) {
+      throw new Error('Message already exists');
+    }
     data.messages[opts.message.id] = {
       id: opts.message.id,
       chatId: opts.chatId,
