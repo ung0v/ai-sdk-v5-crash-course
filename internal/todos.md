@@ -1,5 +1,6 @@
 **Branching UX**
 
+Add a reference what what each data structure does in the linked list
 Add reference for passing custom data to `sendMessage`
 Add reference for `setMessages`
 Add reference for `useChatCacheClearer`

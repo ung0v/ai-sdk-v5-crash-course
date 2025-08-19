@@ -1,9 +1,5 @@
 import type { UIMessage } from 'ai';
-
-export type DBMessage = UIMessage & {
-  parentMessageId: string | null;
-  createdAt: string;
-};
+import type { DBMessage } from './db.ts';
 
 /**
  * parentMessageId is string | null. We can't use null as a key
