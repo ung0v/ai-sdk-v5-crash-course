@@ -59,8 +59,7 @@ const runHonoApp = async (opts: {
     } catch (e) {
       if (
         e instanceof Error &&
-        'code' in e &&
-        e.code === 'ERR_MODULE_NOT_FOUND'
+        e.message.includes('Error when evaluating SSR module')
       ) {
         c.res = new Response('Not found', { status: 404 });
         return;
