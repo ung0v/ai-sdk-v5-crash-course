@@ -13,13 +13,11 @@ Move this to a separate repo
 **Advanced Patterns**
 
 Add guardrails exercise
+Asking clarifying questions
+Creating a plan beforehand
+Task decomposition (maybe generator/evaluator?)
+Parallelisation? Summarizing long articles/documents
 Figure out what other exercises to add to this section
-
----
-
-**Observability**
-
-Add more observability exercises
 
 ---
 
