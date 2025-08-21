@@ -1,57 +1,62 @@
 import { google } from '@ai-sdk/google';
 import { streamText } from 'ai';
+import { tavily } from '@tavily/core';
 
-const INPUT = `Do some research on induction hobs and how I can replace a 100cm wide AGA cooker with an induction range cooker. Which is the cheapest, which is the best?`;
+// const INPUT = `What did Guillermo Rauch say about Matt Pocock?`;
+// const URL = `https://www.aihero.dev/`;
 
-const exemplars = [
-  {
-    input: `What's the difference between TypeScript and JavaScript? Should I learn TypeScript first or JavaScript?`,
-    expected: 'TypeScript vs JavaScript Comparison',
-  },
-  {
-    input: `I want to start investing but I'm a complete beginner. What are the safest options for someone with $5000 to invest?`,
-    expected: 'Beginner Investment Options',
-  },
-];
+// const INPUT = `What is Matt Pocock's open source background?`;
+// const URL = `https://www.aihero.dev/`;
+
+const INPUT = `Why is learning TypeScript important?`;
+const URL = `https://totaltypescript.com/`;
+
+const tavilyClient = tavily({
+  apiKey: process.env.TAVILY_API_KEY,
+});
+
+const scrapeResult = await tavilyClient.extract([URL]);
+
+const rawContent = scrapeResult.results[0]?.rawContent;
+
+if (!rawContent) {
+  throw new Error('Could not scrape the URL');
+}
 
 const result = await streamText({
   model: google('gemini-2.0-flash-lite'),
   prompt: `
     <task-context>
-    You are a helpful assistant that can generate titles for conversations.
+    You are a helpful assistant that summarizes the content of a URL.
     </task-context>
 
-    
-    <rules>
-    Find the most concise title that captures the essence of the conversation.
-    Titles should be at most 30 characters.
-    Titles should be formatted in sentence case, with capital letters at the start of each word. Do not provide a period at the end.
-    </rules>
+    <background-data>
+    Here is the content of the website:
+    <url>
+    ${URL}
+    </url>
+    <content>
+    ${rawContent}
+    </content>
+    </background-data>
 
-    <examples>
-      ${exemplars
-        .map(
-          (e) =>
-            `
-          <example>
-            <input>${e.input}</input>
-            <expected>${e.expected}</expected>
-          </example>
-          `,
-        )
-        .join('\n')}
-    </examples>
+    <rules>
+    - Use the content of the website to answer the question.
+    - If the question is not related to the content of the website, say "I'm sorry, I can only answer questions about the content of the website."
+    - Use quotes from the content of the website to answer the question.
+    - Use paragraphs in your output.
+    </rules>
     
     <conversation-history>
     ${INPUT}
     </conversation-history>
 
     <the-ask>
-    Generate a title for the conversation.
+    Summarize the content of the website based on the conversation history.
     </the-ask>
 
     <output-format>
-    Return only the title.
+    Return only the summary.
     </output-format>
   `,
 });
