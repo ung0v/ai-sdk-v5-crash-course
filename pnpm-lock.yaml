@@ -83,6 +83,9 @@ importers:
       okapibm25:
         specifier: ^1.4.1
         version: 1.4.1
+      papaparse:
+        specifier: ^5.5.3
+        version: 5.5.3
       prompts:
         specifier: ^2.4.2
         version: 2.4.2
@@ -120,6 +123,9 @@ importers:
         specifier: ^4.0.8
         version: 4.0.8
     devDependencies:
+      '@types/papaparse':
+        specifier: ^5.3.16
+        version: 5.3.16
       ai-hero-cli:
         specifier: ^0.0.9
         version: 0.0.9
@@ -1331,6 +1337,9 @@ packages:
 
   '@types/oracledb@6.5.2':
     resolution: {integrity: sha512-kK1eBS/Adeyis+3OlBDMeQQuasIDLUYXsi2T15ccNJ0iyUpQ4xDF7svFu3+bGVrI0CMBUclPciz+lsQR3JX3TQ==}
+
+  '@types/papaparse@5.3.16':
+    resolution: {integrity: sha512-T3VuKMC2H0lgsjI9buTB3uuKj3EMD2eap1MOuEQuBQ44EnDx/IkGhU6EwiTf9zG3za4SKlmwKAImdDKdNnCsXg==}
 
   '@types/pg-pool@2.0.6':
     resolution: {integrity: sha512-TaAUE5rq2VQYxab5Ts7WZhKNmuN78Q6PiFonTDdpbx8a1H0M1vhy3rhiMjl+e2iHmogyMw7jZF4FrE6eJUy5HQ==}
@@ -2711,6 +2720,9 @@ packages:
 
   packet-reader@1.0.0:
     resolution: {integrity: sha512-HAKu/fG3HpHFO0AA8WE8q2g+gBJaZ9MG7fcKk+IJPLTGAD6Psw4443l+9DGRbOIh3/aXr7Phy0TjilYivJo5XQ==}
+
+  papaparse@5.5.3:
+    resolution: {integrity: sha512-5QvjGxYVjxO59MGU2lHVYpRWBBtKHnlIAcSe1uNFCkkptUh63NFRj0FJQm7nR67puEruUci/ZkjmEFrjCAyP4A==}
 
   parse-entities@4.0.2:
     resolution: {integrity: sha512-GG2AQYWoLgL877gQIKeRPGO1xF9+eG1ujIb5soS5gPvLQ1y2o8FL90w2QWNdf9I361Mpp7726c+lj3U0qK1uGw==}
@@ -4851,6 +4863,10 @@ snapshots:
     dependencies:
       '@types/node': 24.0.10
 
+  '@types/papaparse@5.3.16':
+    dependencies:
+      '@types/node': 24.2.1
+
   '@types/pg-pool@2.0.6':
     dependencies:
       '@types/pg': 8.15.4
@@ -6516,6 +6532,8 @@ snapshots:
   package-json-from-dist@1.0.1: {}
 
   packet-reader@1.0.0: {}
+
+  papaparse@5.5.3: {}
 
   parse-entities@4.0.2:
     dependencies:

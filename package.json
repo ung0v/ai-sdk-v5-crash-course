@@ -44,6 +44,7 @@
     "lucide-react": "^0.525.0",
     "mem0ai": "^2.1.36",
     "okapibm25": "^1.4.1",
+    "papaparse": "^5.5.3",
     "prompts": "^2.4.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -58,6 +59,7 @@
     "zod": "^4.0.8"
   },
   "devDependencies": {
+    "@types/papaparse": "^5.3.16",
     "ai-hero-cli": "^0.0.9",
     "husky": "^9.1.7",
     "prettier": "^3.6.2",
