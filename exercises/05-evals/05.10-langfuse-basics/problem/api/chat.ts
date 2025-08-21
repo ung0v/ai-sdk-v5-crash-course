@@ -7,7 +7,6 @@ import {
   type UIMessage,
 } from 'ai';
 import z from 'zod';
-import { langfuse } from './langfuse.ts';
 
 export type MyMessage = UIMessage<
   unknown,
