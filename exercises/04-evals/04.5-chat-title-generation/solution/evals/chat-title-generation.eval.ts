@@ -18,19 +18,10 @@ const data = Papa.parse<{ Input: string; Output: string }>(
   },
 );
 
-const FEW_SHOT_EXAMPLES_COUNT = 5;
 const EVAL_DATA_SIZE = 10;
 
-const fewShotExamples = data.data.slice(
-  0,
-  FEW_SHOT_EXAMPLES_COUNT,
-);
-
 const dataForEvalite = data.data
-  .slice(
-    FEW_SHOT_EXAMPLES_COUNT,
-    FEW_SHOT_EXAMPLES_COUNT + EVAL_DATA_SIZE,
-  )
+  .slice(0, 0 + EVAL_DATA_SIZE)
   .map((row) => ({
     input: row.Input,
     expected: row.Output,
@@ -43,23 +34,6 @@ evalite('Chat Title Generation', {
       model: google('gemini-2.0-flash-lite'),
       prompt: `
         You are a helpful assistant that can generate titles for conversations.
-
-        
-        <examples>
-        ${fewShotExamples
-          .map(
-            (example) => `
-            <example>
-            <input>
-            ${example.Input}
-            </input>
-            <title>
-            ${example.Output}
-            </title>
-            </example>`,
-          )
-          .join('\n')}
-        </examples>
 
         <conversation-history>
         ${input}
