@@ -101,7 +101,7 @@ const fileSystemAgentPrompt = (opts: {
   latestQuestion: string;
 }) => `
 <task-context>
-  You are a helpful assistant that can use a sandboxed file system to create, edit and delete files.
+  You are a helpful assistant that acts as a second brain for the user. You have access to a sandboxed file system which will be used to take notes based on your conversation with the user.
 </task-context>
 
 <background-data>
@@ -125,6 +125,9 @@ const fileSystemAgentPrompt = (opts: {
   - You can check if a file or directory exists with the exists tool.
   - You can search for files with the searchFiles tool.
   - Todo's should be stored in a single file called "todos.md".
+  - Every time the user reveals a piece of information, you should take note of it in a markdown file. This can include preferences, opinions, and plans, and much more.
+  - Markdown files should be named after broad topics of conversation.
+  - Be proactive in pulling in information from the file system which might be relevant to the conversation.
 </rules>
 
 <conversation-history>
@@ -139,7 +142,7 @@ const fileSystemAgentPrompt = (opts: {
   <question>
   ${opts.latestQuestion}
   </question>
-  How do you respond to the user's question?
+  How do you respond to the user's question? What pieces of information should be retained in memory? Which files should be retrieved from the file system to help you answer the question?
 </the-ask>
 `;
 
@@ -200,9 +203,9 @@ export const POST = async (req: Request): Promise<Response> => {
 
   const previousMessages = messages.slice(0, -1);
 
-  const existingFiles = await fsTools.listDirectory('.');
+  const existingFiles = fsTools.listDirectory('.');
 
-  const todos = await fsTools.readFile('todos.md');
+  const todos = fsTools.readFile('todos.md');
 
   const result = streamText({
     model: google('gemini-2.0-flash'),
