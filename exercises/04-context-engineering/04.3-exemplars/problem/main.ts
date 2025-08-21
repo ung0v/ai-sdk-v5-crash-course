@@ -20,24 +20,15 @@ const result = await streamText({
     <task-context>
     You are a helpful assistant that can generate titles for conversations.
     </task-context>
+
     
     <rules>
+    Find the most concise title that captures the essence of the conversation.
     Titles should be at most 30 characters.
+    Titles should be formatted in sentence case, with capital letters at the start of each word. Do not provide a period at the end.
     </rules>
 
-    <examples>
-      ${exemplars
-        .map(
-          (e) =>
-            `
-          <example>
-            <input>${e.input}</input>
-            <expected>${e.expected}</expected>
-          </example>
-          `,
-        )
-        .join('\n')}
-    </examples>
+    ${TODO /* TODO: Add the exemplars here, formatted with XML */}
     
     <conversation-history>
     ${INPUT}
