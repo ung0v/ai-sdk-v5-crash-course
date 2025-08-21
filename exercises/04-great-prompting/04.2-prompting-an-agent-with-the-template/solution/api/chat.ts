@@ -1,5 +1,6 @@
 import { google } from '@ai-sdk/google';
 import {
+  convertToModelMessages,
   stepCountIs,
   streamText,
   tool,
@@ -94,11 +95,9 @@ const tools = {
   }),
 };
 
-const fileSystemAgentPrompt = (opts: {
+const fileSystemAgentSystemPrompt = (opts: {
   existingFiles: string[];
   todos: string;
-  conversationHistory: string;
-  latestQuestion: string;
 }) => `
 <task-context>
   You are a helpful assistant that can use a sandboxed file system to create, edit and delete files.
@@ -126,79 +125,11 @@ const fileSystemAgentPrompt = (opts: {
   - You can search for files with the searchFiles tool.
   - Todo's should be stored in a single file called "todos.md".
 </rules>
-
-<conversation-history>
-  Here is the conversation history (between the user and you) prior to the question. It could be empty if there is no history:
-  <history>
-  ${opts.conversationHistory}
-  </history>
-</conversation-history>
-
-<the-ask>
-  Here is the user's question:
-  <question>
-  ${opts.latestQuestion}
-  </question>
-  How do you respond to the user's question?
-</the-ask>
 `;
-
-const formatConversationHistory = (messages: MyUIMessage[]) => {
-  return messages
-    .map(
-      (m) =>
-        `<message role="${m.role}">${partsToText(m.parts)}</message>`,
-    )
-    .join('\n');
-};
-
-const partsToText = (parts: MyUIMessage['parts']) => {
-  return parts
-    .map((p) => {
-      if (p.type === 'text') {
-        return p.text;
-      }
-
-      if (p.type === 'tool-createDirectory') {
-        return `Called createDirectory tool: ${p.output?.message}`;
-      }
-
-      if (p.type === 'tool-writeFile') {
-        return `Called writeFile tool: ${p.output?.message}`;
-      }
-
-      if (p.type === 'tool-deletePath') {
-        return `Called deletePath tool: ${p.output?.message}`;
-      }
-
-      if (p.type === 'tool-listDirectory') {
-        return `Called listDirectory tool: ${p.output?.message}.`;
-      }
-
-      if (p.type === 'tool-exists') {
-        return `Called exists tool: ${p.output?.message}.`;
-      }
-
-      if (p.type === 'tool-searchFiles') {
-        return `Called searchFiles tool: ${p.output?.message}`;
-      }
-
-      return '';
-    })
-    .join('\n');
-};
 
 export const POST = async (req: Request): Promise<Response> => {
   const body: { messages: MyUIMessage[] } = await req.json();
   const { messages } = body;
-
-  const latestMessage = messages[messages.length - 1];
-
-  if (!latestMessage) {
-    return new Response('No latest message', { status: 400 });
-  }
-
-  const previousMessages = messages.slice(0, -1);
 
   const existingFiles = await fsTools.listDirectory('.');
 
@@ -206,16 +137,14 @@ export const POST = async (req: Request): Promise<Response> => {
 
   const result = streamText({
     model: google('gemini-2.0-flash'),
-    prompt: fileSystemAgentPrompt({
+    system: fileSystemAgentSystemPrompt({
       existingFiles:
         existingFiles?.items?.map((file) => file.name) ?? [],
       todos:
         todos.content ??
         'todos.md file does not exist on the file system',
-      conversationHistory:
-        formatConversationHistory(previousMessages),
-      latestQuestion: partsToText(latestMessage.parts),
     }),
+    messages: convertToModelMessages(messages),
     tools,
     stopWhen: [stepCountIs(10)],
   });

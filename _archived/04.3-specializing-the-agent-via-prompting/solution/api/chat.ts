@@ -1,5 +1,6 @@
 import { google } from '@ai-sdk/google';
 import {
+  convertToModelMessages,
   stepCountIs,
   streamText,
   tool,
@@ -94,11 +95,9 @@ const tools = {
   }),
 };
 
-const fileSystemAgentPrompt = (opts: {
+const fileSystemAgentSystemPrompt = (opts: {
   existingFiles: string[];
   todos: string;
-  conversationHistory: string;
-  latestQuestion: string;
 }) => `
 <task-context>
   You are a helpful assistant that acts as a second brain for the user. You have access to a sandboxed file system which will be used to take notes based on your conversation with the user.
@@ -129,21 +128,6 @@ const fileSystemAgentPrompt = (opts: {
   - Markdown files should be named after broad topics of conversation.
   - Be proactive in pulling in information from the file system which might be relevant to the conversation.
 </rules>
-
-<conversation-history>
-  Here is the conversation history (between the user and you) prior to the question. It could be empty if there is no history:
-  <history>
-  ${opts.conversationHistory}
-  </history>
-</conversation-history>
-
-<the-ask>
-  Here is the user's question:
-  <question>
-  ${opts.latestQuestion}
-  </question>
-  How do you respond to the user's question? What pieces of information should be retained in memory? Which files should be retrieved from the file system to help you answer the question?
-</the-ask>
 `;
 
 const formatConversationHistory = (messages: MyUIMessage[]) => {
@@ -195,30 +179,20 @@ export const POST = async (req: Request): Promise<Response> => {
   const body: { messages: MyUIMessage[] } = await req.json();
   const { messages } = body;
 
-  const latestMessage = messages[messages.length - 1];
-
-  if (!latestMessage) {
-    return new Response('No latest message', { status: 400 });
-  }
-
-  const previousMessages = messages.slice(0, -1);
-
   const existingFiles = fsTools.listDirectory('.');
 
   const todos = fsTools.readFile('todos.md');
 
   const result = streamText({
     model: google('gemini-2.0-flash'),
-    prompt: fileSystemAgentPrompt({
+    system: fileSystemAgentSystemPrompt({
       existingFiles:
         existingFiles?.items?.map((file) => file.name) ?? [],
       todos:
         todos.content ??
         'todos.md file does not exist on the file system',
-      conversationHistory:
-        formatConversationHistory(previousMessages),
-      latestQuestion: partsToText(latestMessage.parts),
     }),
+    messages: convertToModelMessages(messages),
     tools,
     stopWhen: [stepCountIs(10)],
   });
