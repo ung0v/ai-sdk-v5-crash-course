@@ -1,189 +1,93 @@
 import { google } from '@ai-sdk/google';
 import {
-  createUIMessageStream,
+  convertToModelMessages,
   createUIMessageStreamResponse,
-  streamObject,
+  generateText,
   streamText,
+  type ModelMessage,
   type UIMessage,
 } from 'ai';
-import z from 'zod';
 import { langfuse } from './langfuse.ts';
 
-export type MyMessage = UIMessage<
-  unknown,
-  {
-    'slack-message': string;
-    'slack-message-feedback': string;
-  }
->;
-
-const formatMessageHistory = (messages: UIMessage[]) => {
-  return messages
-    .map((message) => {
-      return `${message.role}: ${message.parts
-        .map((part) => {
-          if (part.type === 'text') {
-            return part.text;
-          }
-
-          return '';
-        })
-        .join('')}`;
-    })
-    .join('\n');
-};
-
-const WRITE_SLACK_MESSAGE_FIRST_DRAFT_SYSTEM = `You are writing a Slack message for a user based on the conversation history. Only return the Slack message, no other text.`;
-const EVALUATE_SLACK_MESSAGE_SYSTEM = `You are evaluating the Slack message produced by the user.
-
-  Evaluation criteria:
-  - The Slack message should be written in a way that is easy to understand.
-  - It should be appropriate for a professional Slack conversation.
-`;
-
 export const POST = async (req: Request): Promise<Response> => {
-  const body: { messages: MyMessage[]; id: string } =
-    await req.json();
-  const { messages } = body;
+  const body = await req.json();
+
+  const messages: UIMessage[] = body.messages;
+
+  const modelMessages: ModelMessage[] =
+    convertToModelMessages(messages);
 
   const trace = langfuse.trace({
     sessionId: body.id,
   });
 
-  const stream = createUIMessageStream<MyMessage>({
-    execute: async ({ writer }) => {
-      let step = 0;
-      let mostRecentDraft = '';
-      let mostRecentFeedback = '';
+  const mostRecentMessage = messages[messages.length - 1];
 
-      while (step < 2) {
-        // Write Slack message
-        const writeSlackResult = streamText({
-          model: google('gemini-2.0-flash-001'),
-          system: WRITE_SLACK_MESSAGE_FIRST_DRAFT_SYSTEM,
-          prompt: `
-          Conversation history:
-          ${formatMessageHistory(messages)}
+  if (!mostRecentMessage) {
+    return new Response('No messages provided', { status: 400 });
+  }
 
-          Previous draft (if any):
-          ${mostRecentDraft}
-
-          Previous feedback (if any):
-          ${mostRecentFeedback}
-        `,
-          experimental_telemetry: {
-            isEnabled: true,
-            functionId: 'generate-slack-message',
-            metadata: {
-              langfuseTraceId: trace.id,
-            },
-          },
-        });
-
-        const firstDraftId = crypto.randomUUID();
-
-        let firstDraft = '';
-
-        for await (const part of writeSlackResult.textStream) {
-          firstDraft += part;
-
-          writer.write({
-            type: 'data-slack-message',
-            data: firstDraft,
-            id: firstDraftId,
-          });
-        }
-
-        mostRecentDraft = firstDraft;
-
-        // Evaluate Slack message
-        const evaluateSlackResult = streamObject({
-          model: google('gemini-2.0-flash-001'),
-          system: EVALUATE_SLACK_MESSAGE_SYSTEM,
-          prompt: `
-            Conversation history:
-            ${formatMessageHistory(messages)}
-
-            Most recent draft:
-            ${mostRecentDraft}
-
-            Previous feedback (if any):
-            ${mostRecentFeedback}
-          `,
-          schema: z.object({
-            feedback: z
-              .string()
-              .describe(
-                'The feedback about the most recent draft.',
-              ),
-            isGoodEnough: z
-              .boolean()
-              .describe(
-                'Whether the most recent draft is good enough to stop the loop.',
-              ),
-          }),
-          experimental_telemetry: {
-            isEnabled: true,
-            functionId: 'evaluate-slack-message',
-            metadata: {
-              langfuseTraceId: trace.id,
-            },
-          },
-        });
-
-        const feedbackId = crypto.randomUUID();
-
-        for await (const part of evaluateSlackResult.partialObjectStream) {
-          if (part.feedback) {
-            writer.write({
-              type: 'data-slack-message-feedback',
-              data: part.feedback,
-              id: feedbackId,
-            });
-          }
-        }
-
-        const finalEvaluationObject =
-          await evaluateSlackResult.object;
-
-        // If the draft is good enough, break the loop
-        if (finalEvaluationObject.isGoodEnough) {
-          break;
-        }
-
-        mostRecentFeedback = finalEvaluationObject.feedback;
-
-        step++;
+  const mostRecentMessageText = mostRecentMessage.parts
+    .map((part) => {
+      if (part.type === 'text') {
+        return part.text;
       }
+      return '';
+    })
+    .join('');
 
-      const textPartId = crypto.randomUUID();
+  const titleResult = generateText({
+    model: google('gemini-2.0-flash-lite'),
+    prompt: `
+      You are a helpful assistant that can generate titles for conversations.
 
-      writer.write({
-        type: 'text-start',
-        id: textPartId,
-      });
+      <conversation-history>
+      ${mostRecentMessageText}
+      </conversation-history>
+      
+      Find the most concise title that captures the essence of the conversation.
+      Titles should be at most 30 characters.
+      Titles should be formatted in sentence case, with capital letters at the start of each word. Do not provide a period at the end.
+      Use no punctuation or emojis.
+      If there are acronyms used in the conversation, use them in the title.
+      Use formal language in the title, like 'troubleshooting', 'discussion', 'support', 'options', 'research', etc.
+      Since all items in the list are conversations, do not use the word 'chat', 'conversation' or 'discussion' in the title - it's implied by the UI.
+      The title will be used for organizing conversations in a chat application.
 
-      writer.write({
-        type: 'text-delta',
-        delta: mostRecentDraft,
-        id: textPartId,
-      });
+      Generate a title for the conversation.
+      Return only the title.
+    `,
+    experimental_telemetry: {
+      isEnabled: true,
+      functionId: 'title-generation',
+      metadata: {
+        langfuseTraceId: trace.id,
+      },
+    },
+  });
 
-      writer.write({
-        type: 'text-end',
-        id: textPartId,
-      });
+  const streamTextResult = streamText({
+    model: google('gemini-2.0-flash'),
+    messages: modelMessages,
+    experimental_telemetry: {
+      isEnabled: true,
+      functionId: 'chat',
+      metadata: {
+        langfuseTraceId: trace.id,
+      },
+    },
+  });
+
+  const stream = streamTextResult.toUIMessageStream({
+    onFinish: async () => {
+      const title = await titleResult;
+
+      console.log('title: ', title.text);
 
       trace.update({
-        input: messages,
-        output: mostRecentDraft,
-        metadata: {
-          feedback: mostRecentFeedback,
-        },
-        name: 'generate-slack-message',
+        name: 'chat',
       });
-    },
-    onFinish: async () => {
+
       await langfuse.flushAsync();
     },
   });

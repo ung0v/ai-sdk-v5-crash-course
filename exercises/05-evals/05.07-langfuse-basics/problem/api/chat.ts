@@ -8,30 +8,6 @@ import {
 } from 'ai';
 import z from 'zod';
 
-export type MyMessage = UIMessage<
-  unknown,
-  {
-    'slack-message': string;
-    'slack-message-feedback': string;
-  }
->;
-
-const formatMessageHistory = (messages: UIMessage[]) => {
-  return messages
-    .map((message) => {
-      return `${message.role}: ${message.parts
-        .map((part) => {
-          if (part.type === 'text') {
-            return part.text;
-          }
-
-          return '';
-        })
-        .join('')}`;
-    })
-    .join('\n');
-};
-
 const WRITE_SLACK_MESSAGE_FIRST_DRAFT_SYSTEM = `You are writing a Slack message for a user based on the conversation history. Only return the Slack message, no other text.`;
 const EVALUATE_SLACK_MESSAGE_SYSTEM = `You are evaluating the Slack message produced by the user.
 
@@ -41,7 +17,7 @@ const EVALUATE_SLACK_MESSAGE_SYSTEM = `You are evaluating the Slack message prod
 `;
 
 export const POST = async (req: Request): Promise<Response> => {
-  const body: { messages: MyMessage[]; id: string } =
+  const body: { messages: UIMessage[]; id: string } =
     await req.json();
   const { messages } = body;
 
@@ -50,7 +26,7 @@ export const POST = async (req: Request): Promise<Response> => {
   // - sessionId: body.id
   const trace = TODO;
 
-  const stream = createUIMessageStream<MyMessage>({
+  const stream = createUIMessageStream({
     execute: async ({ writer }) => {
       let step = 0;
       let mostRecentDraft = '';
