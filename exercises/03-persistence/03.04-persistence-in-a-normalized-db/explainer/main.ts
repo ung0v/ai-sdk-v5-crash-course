@@ -28,9 +28,9 @@ const message: MyUIMessage = {
   ],
 };
 
-const dbMessage = mapUIMessagePartsToDBParts(
+const dbMessageParts = mapUIMessagePartsToDBParts(
   message.parts,
   message.id,
 );
 
-console.dir(dbMessage, { depth: null });
+console.dir(dbMessageParts, { depth: null });
