@@ -2,20 +2,33 @@ import { google } from '@ai-sdk/google';
 import { streamText } from 'ai';
 import { tavily } from '@tavily/core';
 
-// const INPUT = `What did Guillermo Rauch say about Matt Pocock?`;
-// const URL = `https://www.aihero.dev/`;
+const testCases = [
+  {
+    input: 'What did Guillermo Rauch say about Matt Pocock?',
+    url: 'https://www.aihero.dev/',
+  },
 
-// const INPUT = `What is Matt Pocock's open source background?`;
-// const URL = `https://www.aihero.dev/`;
+  {
+    input: "What is Matt Pocock's open source background?",
+    url: 'https://www.aihero.dev/',
+  },
 
-const INPUT = `Why is learning TypeScript important?`;
-const URL = `https://totaltypescript.com/`;
+  {
+    input: 'Why is learning TypeScript important?',
+    url: 'https://totaltypescript.com/',
+  },
+] as const;
+
+// Change this to try a different test case
+const TEST_CASE_TO_TRY = 0;
+
+const { input, url } = testCases[TEST_CASE_TO_TRY];
 
 const tavilyClient = tavily({
   apiKey: process.env.TAVILY_API_KEY,
 });
 
-const scrapeResult = await tavilyClient.extract([URL]);
+const scrapeResult = await tavilyClient.extract([url]);
 
 const rawContent = scrapeResult.results[0]?.rawContent;
 
@@ -33,7 +46,7 @@ const result = await streamText({
     <background-data>
     Here is the content of the website:
     <url>
-    ${URL}
+    ${url}
     </url>
     <content>
     ${rawContent}
@@ -48,7 +61,7 @@ const result = await streamText({
     </rules>
     
     <conversation-history>
-    ${INPUT}
+    ${input}
     </conversation-history>
 
     <the-ask>
