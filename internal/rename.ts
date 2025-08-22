@@ -18,7 +18,7 @@ for (const section of sections) {
 
   exercises.forEach((exercise, index) => {
     // Move the exercise to the new number
-    const newExerciseNumber = `${sectionNumber}.${index + 1}`;
+    const newExerciseNumber = `${sectionNumber}.${(index + 1).toString().padStart(2, '0')}`;
 
     // 007.3-foo-bar-baz -> foo-bar-baz
     const existingExerciseName = exercise
