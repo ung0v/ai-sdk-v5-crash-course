@@ -84,10 +84,6 @@ export const POST = async (req: Request): Promise<Response> => {
 
       console.log('title: ', title.text);
 
-      trace.update({
-        name: 'chat',
-      });
-
       await langfuse.flushAsync();
     },
   });
