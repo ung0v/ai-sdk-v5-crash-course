@@ -13,7 +13,7 @@ const IIMT_ARTICLE = readFileSync(
   'utf-8',
 );
 
-// TODO: Add some instructions telling the model to think about its answer first before it responds.
+// TODO: Add some instructions telling the model to think about its answer first before it responds. Consider the optimal path for the user to understand the code, including each individual piece of syntax.
 // TODO: Add an output format telling the model to return two sections - a <thinking> block and an answer. The answer should NOT be wrapped in an <answer> tag.
 const result = streamText({
   model: google('gemini-2.0-flash-lite'),
