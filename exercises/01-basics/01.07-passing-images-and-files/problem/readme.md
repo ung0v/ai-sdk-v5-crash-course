@@ -6,7 +6,7 @@ Fortunately, the AI SDK provides a way of passing files through the wire so that
 
 I've given our frontend a couple of upgrades, namely the ability to upload files. I've given you an image that you can upload, and the plan is to ask the LLM to describe the image.
 
-Our `/api/chat` POST endpoint looks very similar to previous exercises:
+Our [`/api/chat`](./api/chat.ts) POST endpoint looks very similar to previous exercises:
 
 ```ts
 export const POST = async (req: Request): Promise<Response> => {
