@@ -38,6 +38,11 @@ const runHonoApp = async (opts: {
   app.use('/*', async (c) => {
     const url = new URL(c.req.url);
 
+    if (url.pathname.includes('favicon')) {
+      c.res = new Response('Not found', { status: 404 });
+      return;
+    }
+
     try {
       const modulePath = path.join(
         opts.root,
