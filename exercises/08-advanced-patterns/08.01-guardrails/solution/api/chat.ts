@@ -3,32 +3,22 @@ import {
   convertToModelMessages,
   createUIMessageStream,
   createUIMessageStreamResponse,
-  generateObject,
   generateText,
   streamText,
-  type InferUIMessageChunk,
   type ModelMessage,
   type UIMessage,
-  type UIMessageStreamWriter,
 } from 'ai';
 import { GUARDRAIL_SYSTEM } from './guardrail-prompt.ts';
-
-type MyMessage = UIMessage<
-  unknown,
-  {
-    'guardrail-result': string;
-  }
->;
 
 export const POST = async (req: Request): Promise<Response> => {
   const body = await req.json();
 
-  const messages: MyMessage[] = body.messages;
+  const messages: UIMessage[] = body.messages;
 
   const modelMessages: ModelMessage[] =
     convertToModelMessages(messages);
 
-  const stream = createUIMessageStream<MyMessage>({
+  const stream = createUIMessageStream<UIMessage>({
     execute: async ({ writer }) => {
       console.time('Guardrail Time');
       const guardrailResult = await generateText({
