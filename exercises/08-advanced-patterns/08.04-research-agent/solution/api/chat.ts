@@ -1,5 +1,6 @@
 import { google } from '@ai-sdk/google';
 import {
+  convertToModelMessages,
   createUIMessageStream,
   createUIMessageStreamResponse,
   streamObject,
@@ -7,7 +8,7 @@ import {
   type UIMessage,
 } from 'ai';
 import { tavily } from '@tavily/core';
-import z from 'zod';
+import z, { url } from 'zod';
 
 export type MyMessage = UIMessage<
   unknown,
@@ -16,22 +17,6 @@ export type MyMessage = UIMessage<
     plan: string;
   }
 >;
-
-const formatMessageHistory = (messages: UIMessage[]) => {
-  return messages
-    .map((message) => {
-      return `${message.role}: ${message.parts
-        .map((part) => {
-          if (part.type === 'text') {
-            return part.text;
-          }
-
-          return '';
-        })
-        .join('')}`;
-    })
-    .join('\n');
-};
 
 export const POST = async (req: Request): Promise<Response> => {
   const body: { messages: MyMessage[] } = await req.json();
@@ -44,13 +29,16 @@ export const POST = async (req: Request): Promise<Response> => {
   const stream = createUIMessageStream<MyMessage>({
     execute: async ({ writer }) => {
       const queries = streamObject({
-        model: google('gemini-2.0-flash-001'),
+        model: google('gemini-2.0-flash'),
         system: `
           You are a helpful assistant that generates queries to search the web for information.
-          
+
+          <rules>
+            Make a plan before you generate the queries. The plan should identify the groups of information required to answer the question.
+            The plan should list pieces of information that are required to answer the question, then consider how to break down the information into queries.
+          </rules>
+
           Generate 3-5 queries that are relevant to the conversation history.
-          
-          Make a plan before you generate the queries. The plan should identify the groups of information required to answer the question.
           
           <output-format>
             Reply as a JSON object with the following properties:
@@ -62,10 +50,7 @@ export const POST = async (req: Request): Promise<Response> => {
           plan: z.string(),
           queries: z.array(z.string()),
         }),
-        prompt: `
-          Conversation history:
-          ${formatMessageHistory(messages)}
-        `,
+        messages: convertToModelMessages(messages),
       });
 
       const queriesPartId = crypto.randomUUID();
@@ -98,51 +83,69 @@ export const POST = async (req: Request): Promise<Response> => {
 
       const searchResults = await Promise.all(
         allQueries.map(async (query) => {
-          const searchResult = await tavilyClient.search(query, {
+          const response = await tavilyClient.search(query, {
             maxResults: 5,
           });
 
           return {
             query,
-            results: searchResult,
+            response,
           };
         }),
       );
 
+      const formattedSources = searchResults
+        .map(({ response, query }, i) => {
+          return `<search-query index="${i + 1}" query="${query}">
+            ${response.results
+              .map((res, j) => {
+                return `<result index="${j + 1}">
+                <title>${res.title}</title>
+                <url>${res.url ?? '#'}</url>
+                <content>${res.content ?? ''}</content>
+              </result>`;
+              })
+              .join('\n')}
+          </search-query>`;
+        })
+        .join('\n');
+
       const answer = streamText({
-        model: google('gemini-2.0-flash-001'),
+        model: google('gemini-2.0-flash'),
         system: `You are a helpful assistant that answers questions based on the search results.
           <rules>
           You should use the search results to answer the question.
           Use sources from the search results to answer the question.
+          Sources should be cited as markdown links.
+
+          <markdown-link-example>
+            You might consider looking at [this article](https://www.example.com) to answer the question.
+          </markdown-link-example>
+          
+          Sources should not be cited with the full URL visible to the user. Instead, use a short description of the source:
+
+          <bad-markdown-link-example>
+            This site will be useful to you: [https://www.example.com](https://www.example.com)
+          </bad-markdown-link-example>
+
           </rules>
+
+          <sources>
+            ${formattedSources}
+          </sources>
+
           <output-format>
             Use markdown formatting.
-            Cite sources as markdown links.
           </output-format>
         `,
-        prompt: `
-          Conversation history:
-          ${formatMessageHistory(messages)}
-
-          Search results:
-          ${searchResults
-            .map((result, i) => {
-              // Render each query and its results as a Markdown section
-              const queryHeader = `### Search Query ${i + 1}: ${result.query}\n`;
-              const resultsList = result.results.results
-                .map(
-                  (res, j) =>
-                    `**${j + 1}. [${res.title}](${res.url ?? '#'})**\n\n${res.content ?? ''}`,
-                )
-                .join('\n\n---\n\n');
-              return `${queryHeader}\n${resultsList}`;
-            })
-            .join('\n\n')}
-        `,
+        messages: convertToModelMessages(messages),
       });
 
-      writer.merge(answer.toUIMessageStream());
+      writer.merge(
+        answer.toUIMessageStream({
+          sendStart: false,
+        }),
+      );
     },
   });
 
