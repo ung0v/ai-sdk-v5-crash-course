@@ -47,7 +47,10 @@ for (const section of sections) {
     const topLevelFilesAndFolders = readdirSync(exerciseDir);
 
     const folderForReadme = topLevelFilesAndFolders.find(
-      (folder) => folder === 'problem' || folder === 'explainer',
+      (folder) =>
+        folder === 'problem' ||
+        folder === 'explainer' ||
+        folder === 'explainer.1',
     );
 
     const solutionFolderExists = topLevelFilesAndFolders.find(
