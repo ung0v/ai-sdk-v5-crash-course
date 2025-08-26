@@ -1,16 +1,16 @@
-# AI SDK v5 Tutorial
+# AI Engineering Crash Course
 
-🚀 **The AI SDK v5 is here, and it's incredible.** This repository contains all the code examples and exercises from our free, comprehensive AI SDK v5 tutorial available on [aihero.dev](https://aihero.dev).
+🚀 **Master AI Engineering with AI Hero's comprehensive crash course.** This repository contains all the code examples and exercises from our hands-on, practical AI engineering course available on [aihero.dev](https://aihero.dev).
 
-AI SDK v5 brings revolutionary improvements to building AI applications with TypeScript. I think of it as the missing standard library for building AI apps.
+Learn to build production-ready AI applications using the latest tools and techniques, including AI SDK v5 - the incredible TypeScript library that's becoming the standard for AI app development.
 
-## 🎯 What You'll Learn
+## 🎯 What You'll Master
 
-By following along with the tutorial and working through these exercises, you'll master:
+This crash course will take you from AI engineering basics to advanced production patterns:
 
-- **AI SDK v5 Fundamentals** - Understanding what the AI SDK is and how it works
-- **Text Streaming** - Building real-time streaming experiences to the UI
-- **Tool Calling** - Creating AI applications that can use external tools and APIs
+- **AI SDK v5 Fundamentals** - Understanding the modern AI development toolkit
+- **Text Streaming** - Building real-time, responsive AI experiences
+- **Tool Calling & Agents** - Creating AI applications that can use external tools and APIs
 - **Message Parts** - Working with structured message components and data
 - **Model Context Protocol (MCP)** - Integrating with external data sources and tools
 - **File & Image Handling** - Processing and working with multimedia content
@@ -33,8 +33,8 @@ By following along with the tutorial and working through these exercises, you'll
 1. **Clone this repository:**
 
 ```bash
-git clone https://github.com/ai-hero-dev/ai-sdk-5-tutorial.git
-cd ai-sdk-5-tutorial
+git clone https://github.com/ai-hero-dev/ai-engineering-crash-course.git
+cd ai-engineering-crash-course
 ```
 
 2. **Install dependencies:**
@@ -49,9 +49,9 @@ pnpm install
 cp .env.example .env
 ```
 
-4. **Add your API keys to `.env`** and you're ready to go!
+4. **Add your API keys to `.env`** and you're ready to start learning!
 
-## 📚 Running the Exercises
+## 📚 Course Structure
 
 Start by running `pnpm dev`:
 
@@ -59,36 +59,35 @@ Start by running `pnpm dev`:
 pnpm dev
 ```
 
-This will allow you to choose between the different exercises.
+This will allow you to choose between the different course sections.
 
-You can also run `pnpm exercise <exercise-number>` to run a specific exercise.
+You can also run `pnpm exercise <exercise-number>` to jump to a specific exercise.
 
-## 📁 Repository Structure
+## 📁 Course Modules
 
 ```
 exercises/
-├── 01-basics/                    # AI SDK v5 fundamentals
+├── 01-basics/                    # AI Engineering fundamentals
 │   ├── 01.1-what-is-the-ai-sdk/
 │   ├── 01.2-choosing-a-model/
 │   ├── 01.3-stream-text-to-terminal/
 │   ├── 01.4-ui-message-streams/
 │   ├── 01.5-stream-text-to-ui/
 │   └── 01.6-system-prompts/
-├── 02-agents/              # Tool calling & agents
-├── 03-advanced/                  # Advanced features
+├── 02-agents/                    # Tool calling & agents
+├── 03-advanced/                  # Advanced AI engineering patterns
 └── 99-reference/                 # Reference implementations
 ```
 
-## 🛠️ Exercise Workflow
+## 🛠️ Learning Workflow
 
-Each exercise follows this structure:
+Each exercise follows this learning structure:
 
 ### `problem/` folder
 
 - **Your coding playground** - Start here!
 - Contains `readme.md` with detailed instructions
 - Code files with `TODO` comments for you to implement
-- This is where the learning happens
 
 ### `solution/` folder
 
@@ -102,18 +101,18 @@ Each exercise follows this structure:
 - Extended walkthroughs of complex topics
 - Perfect for reinforcing your understanding
 
-## 🎥 Watch the Full Tutorial
+## 🎥 Complete Course Experience
 
-This repository is the companion to our comprehensive AI SDK v5 tutorial on [aihero.dev](https://aihero.dev). The tutorial includes:
+This repository is the companion to our comprehensive AI engineering crash course on [aihero.dev](https://aihero.dev). The full course includes:
 
 - **Step-by-step video walkthroughs** of every exercise
-- **Deep dives** into AI SDK v5 concepts and patterns
+- **Deep dives** into AI engineering concepts and patterns
 - **Best practices** for production AI applications
 - **Real-world examples** and use cases
 
-## 🆕 What's New in AI SDK v5?
+## 🆕 Modern AI Engineering Tools
 
-AI SDK v5 introduces groundbreaking features that make building AI applications easier and more powerful than ever:
+This crash course covers the latest tools and techniques in AI engineering, including AI SDK v5's groundbreaking features:
 
 - **Enhanced Streaming** - Better real-time experiences
 - **Improved Multi-Provider Support** - Seamless switching between AI providers
@@ -122,10 +121,10 @@ AI SDK v5 introduces groundbreaking features that make building AI applications 
 - **Simplified Agent Creation** - Easier multi-agent workflows
 - **Production-Ready Tools** - Built-in testing and monitoring capabilities
 
-## 🤝 Need Help?
+## 🤝 Getting Help
 
 1. **Check the solution** - Each exercise has a completed version
 2. **Verify your setup** - Ensure API keys and dependencies are correct
-3. **Watch the tutorial** - Full explanations available on aihero.dev
+3. **Watch the course** - Full explanations available on [aihero.dev](https://aihero.dev)
 
-Ready to build the future of AI applications? Let's dive into AI SDK v5! 🚀
+Ready to become an AI engineering expert? Let's start building the future! 🚀
