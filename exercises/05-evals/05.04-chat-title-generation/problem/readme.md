@@ -48,7 +48,7 @@ const dataForEvalite = data.data
 Here's how I recommend you complete this exercise:
 
 1. Run these evals without any scorers just to get a kind of baseline of what's happening. You can use an `EVAL_DATA_SIZE` of 5 just to start with.
-2. From there, iterate on the prompts just to get the first five working. You can use the prompt template that we talked about in our [previous exercises](/exercises/04-context-engineering/04.1-the-template/explainer/readme.md). Right now, the prompt is very basic:
+2. From there, iterate on the prompts just to get the first five working. You can use the prompt template that we talked about in our [previous exercises](/exercises/04-context-engineering/04.01-the-template/explainer/readme.md). Right now, the prompt is very basic:
 
 ```typescript
 const result = await generateText({

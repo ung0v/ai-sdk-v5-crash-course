@@ -8,6 +8,8 @@ import {
 import { join } from 'path';
 import { styleText } from 'util';
 
+const ROOT_DIR = process.cwd();
+
 const EXERCISE_DIR = 'exercises';
 
 const sections = readdirSync(EXERCISE_DIR);
@@ -93,13 +95,34 @@ for (const section of sections) {
     if (!readmeExists) {
       addError(section, exercise, 'No readme.md file found');
     } else {
-      const readmeContent = readFileSync(
-        join(exerciseDir, folderForReadme, 'readme.md'),
-        'utf-8',
+      const readmePath = join(
+        exerciseDir,
+        folderForReadme,
+        'readme.md',
       );
+      const readmeContent = readFileSync(readmePath, 'utf-8');
 
+      // NO EMPTY README.MD FILE
       if (readmeContent.trim().length === 0) {
         addError(section, exercise, 'Readme.md file is empty');
+      }
+
+      // NO BROKEN LINKS
+      // 1. Search for markdown links in the readme that start with /
+      // Only match markdown links, not checkboxes
+      const links =
+        readmeContent.match(/\[[^\]]+\]\(\/[^)]+\)/gm) ?? [];
+
+      for (const link of links) {
+        // 2. For each link, check if it exists on the file system
+        const splitResult = link.split('](');
+        const url = splitResult[1]?.slice(1, -1);
+
+        if (!url) continue;
+
+        if (!existsSync(join(ROOT_DIR, url))) {
+          addError(section, exercise, `Broken link: ${url}`);
+        }
       }
     }
 

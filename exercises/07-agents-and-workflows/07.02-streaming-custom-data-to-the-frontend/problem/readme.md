@@ -35,7 +35,7 @@ The `slack-message` and `slack-message-feedback` keys represent the name of the 
 
 One data part is going to represent the evaluation result and one is going to represent the first draft.
 
-You probably won't need to change much of this code here. As extra prep for this lesson, I recommend you check out the [reference material](/exercises/99-reference/99.2-custom-data-parts-streaming/explainer/readme.md) on streaming custom data parts, because that will tell you a few things that will help you solve these next todos.
+You probably won't need to change much of this code here. As extra prep for this lesson, I recommend you check out the [reference material](/exercises/99-reference/99.04-custom-data-parts-streaming/explainer/readme.md) on streaming custom data parts, because that will tell you a few things that will help you solve these next todos.
 
 ## Passing The Custom Message Type To The Frontend
 
@@ -71,20 +71,20 @@ And again, there's examples for all of these things in the reference material, w
 
 ## Steps To Complete
 
-- [ ] Check out the [reference material](/exercises/99-reference/99.2-custom-data-parts-streaming/explainer/readme.md) on streaming custom data parts. This will tell you how to update the `MyMessage` type.
+- [ ] Check out the [reference material](/exercises/99-reference/99.04-custom-data-parts-streaming/explainer/readme.md) on streaming custom data parts. This will tell you how to update the `MyMessage` type.
 
 - [ ] Update the `MyMessage` type with custom data parts for 'slack-message' and 'slack-message-feedback'
 
 - [ ] Update the API to use `streamText` instead of `generateText` for the first draft and evaluation
 
-- [ ] Create a `createUIMessageStream` to manage the writing of messages and data parts. Check the [reference material](/exercises/99-reference/99.3-custom-data-parts-stream-to-frontend/explainer/readme.md) to understand how to do this.
+- [ ] Create a `createUIMessageStream` to manage the writing of messages and data parts. Check the [reference material](/exercises/99-reference/99.05-custom-data-parts-stream-to-frontend/explainer/readme.md) to understand how to do this.
 
 - [ ] Use the `writer.write()` method to add custom data parts to the stream as they're generated
 
-- [ ] Ensure that all the data parts are written with consistent ids. Check out the [reference material](/exercises/99-reference/99.4-custom-data-parts-id-reconciliation/explainer/readme.md) to understand how to do this.
+- [ ] Ensure that all the data parts are written with consistent ids. Check out the [reference material](/exercises/99-reference/99.06-custom-data-parts-id-reconciliation/explainer/readme.md) to understand how to do this.
 
 - [ ] Update the frontend to use the custom `MyMessage` type in the `useChat` hook
 
-- [ ] Modify the `Message` component to render the custom data parts with appropriate styling. Again, the [reference material](/exercises/99-reference/99.3-custom-data-parts-stream-to-frontend/explainer/readme.md) has some tips here.
+- [ ] Modify the `Message` component to render the custom data parts with appropriate styling. Again, the [reference material](/exercises/99-reference/99.05-custom-data-parts-stream-to-frontend/explainer/readme.md) has some tips here.
 
 - [ ] Test your implementation by running the local dev server and checking if you see the Slack message draft and feedback appearing on the screen before the final message

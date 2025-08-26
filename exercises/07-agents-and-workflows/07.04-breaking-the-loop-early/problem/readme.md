@@ -70,7 +70,7 @@ Good luck, and I'll see you in the solution.
   - A feedback string
   - A boolean indicating if the draft is good enough
 
-- [ ] Update the code to stream the feedback to the frontend as it appears in the `partialObjectStream`. Check out the [reference material](/exercises/99-reference/99.1-stream-object-partial-object-stream/explainer/readme.md) for more information on partial object streams.
+- [ ] Update the code to stream the feedback to the frontend as it appears in the `partialObjectStream`. Check out the [reference material](/exercises/99-reference/99.07-stream-object-partial-object-stream/explainer/readme.md) for more information on partial object streams.
 
 - [ ] Modify the loop to break early if the LLM indicates the draft is good enough
 

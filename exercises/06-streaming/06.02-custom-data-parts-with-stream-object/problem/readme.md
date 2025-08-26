@@ -71,7 +71,7 @@ for await (const chunk of followupSuggestionsResult.textStream) {
 }
 ```
 
-Use the [reference material](/exercises/99-reference/99.7-stream-object-partial-object-stream/explainer/readme.md for more information.
+Use the [reference material](/exercises/99-reference/99.07-stream-object-partial-object-stream/explainer/readme.md) for more information.
 
 ## Showing the Suggestions in the Frontend
 
@@ -110,7 +110,7 @@ Good luck, and I'll see you in the solution.
 - [ ] Update the streaming logic to use the `partialObjectStream`
   - Change `followupSuggestionsResult.textStream` to `followupSuggestionsResult.partialObjectStream`
   - Remove the `fullSuggestion` variable as it's no longer needed
-  - Use the [reference material](/exercises/99-reference/99.7-stream-object-partial-object-stream/explainer/readme.md) for more information.
+  - Use the [reference material](/exercises/99-reference/99.07-stream-object-partial-object-stream/explainer/readme.md) for more information.
 
 - [ ] Update the `writer.write` call to handle the array of suggestions
   - Change the data field to use the chunks from the partial object stream
