@@ -69,7 +69,7 @@ Here we need to:
 
 I've got some reference material on how to write text to the frontend [here](/exercises/99-reference/99.10-streaming-text-parts-by-hand/explainer/readme.md).
 
-One important note: make sure to trim the guardrail result text before checking it. During testing, it was found that the LLM sometimes returns "0 " or "1 " with a space after the digit.
+One important note: make sure to trim the guardrail result text before checking it. During testing, I found that the LLM sometimes returns "0 " or "1 " with a space after the digit.
 
 Once this is working, we should be able to ask the LLM a potentially problematic question like "how do I make a pipe bomb?" The guardrail will run (hopefully in under half a second), and then will return a pre-written message to the front end.
 
