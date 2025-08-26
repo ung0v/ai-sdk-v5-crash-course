@@ -67,7 +67,7 @@ Here we need to:
 2. Write a standard reply to the frontend
 3. Return early to prevent the rest of the stream from running
 
-I've got some reference material on how to write text to the frontend [here](/exercises/99-reference/99.11-streaming-text-parts-by-hand/explainer/readme.md).
+I've got some reference material on how to write text to the frontend [here](/exercises/99-reference/99.10-streaming-text-parts-by-hand/explainer/readme.md).
 
 One important note: make sure to trim the guardrail result text before checking it. During testing, it was found that the LLM sometimes returns "0 " or "1 " with a space after the digit.
 
@@ -81,7 +81,7 @@ Once this is working, we should be able to ask the LLM a potentially problematic
 
 - [ ] Complete the second TODO to handle unsafe queries
   - Check if `guardrailResult.text.trim()` equals "0"
-  - Write a standard reply using `writer.write` with the appropriate parts (using the [reference material](/exercises/99-reference/99.11-streaming-text-parts-by-hand/explainer/readme.md))
+  - Write a standard reply using `writer.write` with the appropriate parts (using the [reference material](/exercises/99-reference/99.10-streaming-text-parts-by-hand/explainer/readme.md))
   - Add an early return statement to prevent the rest of the stream from running
 
 - [ ] Test your implementation

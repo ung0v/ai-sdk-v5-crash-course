@@ -35,7 +35,7 @@ We'll need to maintain state between iterations by tracking:
 - The most recent draft
 - The most recent feedback
 
-Once the loop is done, we'll use the final draft as our response, streaming it as a text part rather than a custom data part. Check out the [reference material](/exercises/99-reference/99.11-streaming-text-parts-by-hand/explainer/readme.md) to see how to do this.
+Once the loop is done, we'll use the final draft as our response, streaming it as a text part rather than a custom data part. Check out the [reference material](/exercises/99-reference/99.10-streaming-text-parts-by-hand/explainer/readme.md) to see how to do this.
 
 Make sure you lock down the stop condition of your while loop - paid systems with potential infinite loops can be scary! Always ensure your loop has a clear exit condition.
 
