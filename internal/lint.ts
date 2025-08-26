@@ -92,6 +92,15 @@ for (const section of sections) {
 
     if (!readmeExists) {
       addError(section, exercise, 'No readme.md file found');
+    } else {
+      const readmeContent = readFileSync(
+        join(exerciseDir, folderForReadme, 'readme.md'),
+        'utf-8',
+      );
+
+      if (readmeContent.trim().length === 0) {
+        addError(section, exercise, 'Readme.md file is empty');
+      }
     }
 
     // NO MAIN.TS FILE IN PROBLEM OR EXPLAINER FOLDER
