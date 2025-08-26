@@ -1,5 +1,6 @@
 import { google } from '@ai-sdk/google';
 import {
+  convertToModelMessages,
   createUIMessageStream,
   createUIMessageStreamResponse,
   streamObject,
@@ -28,26 +29,20 @@ export const POST = async (req: Request): Promise<Response> => {
         const checkForClarifyingQuestionsResult = streamObject({
           model: google('gemini-2.0-flash-001'),
           system: CHECK_FOR_CLARIFYING_QUESTIONS_SYSTEM,
-          prompt: `
-            Conversation history:
-            ${formatMessageHistory(messages)}
-          `,
+          messages: convertToModelMessages(messages),
           schema: z.object({
             reasoning: z
               .string()
               .describe(
-                'The reasoning for why the clarifying questions are needed.',
-              ),
+                'The reasoning for why the clarifying questions are needed. Only return this if the clarifying questions are needed.',
+              )
+              .optional(),
             message: z
               .string()
               .describe(
-                'The message to send to the user, containing the clarifying questions.',
-              ),
-            areClarifyingQuestionsNeeded: z
-              .boolean()
-              .describe(
-                'Whether writing Slack message requires any clarifying questions.',
-              ),
+                'The message to send to the user, containing the clarifying questions. Only return this if the clarifying questions are needed.',
+              )
+              .optional(),
           }),
         });
 
@@ -69,7 +64,7 @@ export const POST = async (req: Request): Promise<Response> => {
 
         // If the draft requires clarifying questions, send them to the user
         // and don't enter the loop
-        if (finalObject.areClarifyingQuestionsNeeded) {
+        if (finalObject.message) {
           const id = crypto.randomUUID();
 
           writer.write({
