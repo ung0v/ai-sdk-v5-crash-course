@@ -125,6 +125,6 @@ Good luck, and I'll see you in the solution.
   - Handle the case when there are no messages by providing a default array
 
 - [ ] Test your implementation
-  - Run the exercise with `pnpm run exercise 03.3`
+  - Run the exercise with `pnpm run exercise`
   - Check the local dev server at localhost:3000
   - Ask a question and verify that multiple suggestions appear

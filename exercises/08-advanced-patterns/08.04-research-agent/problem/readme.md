@@ -178,6 +178,6 @@ const [input, setInput] = useState(
   - Include markdown links to sources in the summary
 
 - [ ] Test your implementation
-  - Run the exercise with `pnpm run exercise 08.04`
+  - Run the exercise with `pnpm run exercise`
   - Test with different queries to ensure it works correctly
   - Verify that the frontend displays the plan, queries, and summary correctly

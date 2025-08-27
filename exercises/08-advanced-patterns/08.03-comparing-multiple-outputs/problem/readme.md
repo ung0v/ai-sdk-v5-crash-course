@@ -184,7 +184,7 @@ Try it on some math questions or content generation tasks! Good luck, and I'll s
   - Update the messages array using the `setMessages` function from useChat
 
 - [ ] Test your implementation
-  - Run the exercise with `pnpm run exercise 08.03`
+  - Run the exercise with `pnpm run exercise`
   - Navigate to localhost:3000
   - Ask a question and observe the two model responses
   - Select one response and verify you can continue the conversation

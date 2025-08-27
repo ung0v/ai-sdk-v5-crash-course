@@ -86,6 +86,6 @@ I've scaffolded out the actual front-end code, so you won't need to do much ther
   - Simply pass `message.metadata` to the component
 
 - [ ] Test the solution by running the exercise
-  - Run `pnpm run exercise 03.4`
+  - Run `pnpm run exercise`
   - Navigate to localhost:3000
   - Send a message and observe if the duration appears after the AI responds

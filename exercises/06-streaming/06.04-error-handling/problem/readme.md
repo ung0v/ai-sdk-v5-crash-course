@@ -112,7 +112,7 @@ Once that's done, you should be able to run the code and send any message to the
   - Replace the TODO in the JSX with conditional rendering for the ErrorMessage component like `{error && <ErrorMessage error={error} />}`
 
 - [ ] Test your implementation:
-  - Run the exercise with `pnpm run exercise 06.04`
+  - Run the exercise with `pnpm run exercise`
   - Open localhost:3000 in your browser
   - Send any message to the backend
   - Verify that you see a custom error message displayed

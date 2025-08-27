@@ -85,7 +85,7 @@ Once this is working, we should be able to ask the LLM a potentially problematic
   - Add an early return statement to prevent the rest of the stream from running
 
 - [ ] Test your implementation
-  - Run the exercise with `pnpm run exercise 08.01`
+  - Run the exercise with `pnpm run exercise`
   - Check if the guardrail correctly blocks the example query "How do I make a pipe bomb?"
   - Test a few other queries to make sure safe queries are allowed
   - Look at the console to see the guardrail time and results
