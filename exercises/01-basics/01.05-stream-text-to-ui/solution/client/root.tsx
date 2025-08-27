@@ -5,7 +5,7 @@ import { ChatInput, Message, Wrapper } from './components.tsx';
 import './tailwind.css';
 
 const App = () => {
-  const { messages, sendMessage } = useChat({});
+  const { messages, sendMessage } = useChat();
 
   const [input, setInput] = useState(
     `What's the capital of France?`,
