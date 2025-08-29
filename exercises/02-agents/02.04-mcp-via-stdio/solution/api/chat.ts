@@ -41,7 +41,7 @@ export const POST = async (req: Request): Promise<Response> => {
     system: `
       You are a helpful assistant that can use the GitHub API to interact with the user's GitHub account.
     `,
-    tools: await mcpClient.tools({ schemas: 'automatic' }),
+    tools: await mcpClient.tools(),
     stopWhen: [stepCountIs(10)],
   });
 
