@@ -4,8 +4,7 @@ import {
   stepCountIs,
   streamText,
   tool,
-  type InferUITool,
-  type Tool,
+  type InferUITools,
   type UIMessage,
 } from 'ai';
 import { z } from 'zod';
@@ -15,8 +14,8 @@ import * as fsTools from './file-system-functionality.ts';
 // the variable below
 const tools = TODO;
 
-// TODO - write a UIMessage type that receives ToolsFromToolDefinition<typeof tools>
-// as the third type argument
+// TODO - write a UIMessage type that receives three type arguments:
+// never, never, and InferUITools<typeof tools>
 export type MyUIMessage = TODO;
 
 export const POST = async (req: Request): Promise<Response> => {
