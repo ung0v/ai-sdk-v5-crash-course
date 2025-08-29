@@ -7,9 +7,7 @@
   "scripts": {
     "dev": "ai-hero-cli exercise",
     "exercise": "ai-hero-cli exercise",
-    "prepare": "husky",
-    "lint": "tsx internal/lint.ts",
-    "update-cms": "ai-hero-cli internal update-cvm"
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
