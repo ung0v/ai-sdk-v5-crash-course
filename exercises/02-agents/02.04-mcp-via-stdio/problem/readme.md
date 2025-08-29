@@ -71,7 +71,7 @@ Why not get it to list some issues on a repository that you know, or even ask it
 
 ## Steps To Complete
 
-- [ ] Get a [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) and add it to your `.env` file
+- [ ] Get a [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) and add it to your `.env` file. Make it readonly if you like.
 
 - [ ] Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) if you don't have it already
 
