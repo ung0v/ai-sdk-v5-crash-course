@@ -124,6 +124,6 @@ const stream = result.toUIMessageStream({
 
 console.log('--- STREAM ---');
 
-for await (const message of stream) {
-  console.log(message);
+for await (const chunk of stream) {
+  console.log(chunk);
 }

@@ -45,6 +45,7 @@ const App = () => {
           // convert the file to a data URL. This
           // will be useful!
           sendMessage({
+            // NOTE: 'parts' will be useful
             text: input,
           });
 
