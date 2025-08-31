@@ -45,6 +45,7 @@ export const POST = async (req: Request): Promise<Response> => {
   return result.toUIMessageStreamResponse();
 };
 
+// http://localhost:3000/api/chat?chatId=123
 export const GET = async (req: Request): Promise<Response> => {
   const url = new URL(req.url);
   const chatId = url.searchParams.get('chatId');

@@ -34,8 +34,9 @@ const App = () => {
     },
   });
 
-  // TODO: pass the chatId to the useChat hook,
-  // as well as any existing messages from the backend
+  // TODO: pass the chatId from the search params to the
+  // useChat hook, as well as any existing messages
+  // from the backend
   const { messages, sendMessage } = useChat({});
 
   const [input, setInput] = useState(
