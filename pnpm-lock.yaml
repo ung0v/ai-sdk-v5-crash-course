@@ -1738,9 +1738,9 @@ packages:
     resolution: {integrity: sha512-t12sJlfkxo0Hon6MYCwOd2qliAjGObrnGL6hYXP9h8AiNAVQCiyGrFrqtOH8TIhM0kgaGrq3s/DeZ679Sr8ipw==}
     hasBin: true
 
-  eventsource-parser@3.0.5:
-    resolution: {integrity: sha512-bSRG85ZrMdmWtm7qkF9He9TNRzc/Bm99gEJMaQoHJ9E6Kv9QBbsldh2oMj7iXmYNEAVvNgvv5vPorG6W+XtBhQ==}
-    engines: {node: '>=20.0.0'}
+  eventsource-parser@3.0.6:
+    resolution: {integrity: sha512-Vo1ab+QXPzZ4tCa8SwIHJFaSzy4R6SHf7BY79rFBDf0idraZWAkYrDjDj8uWaSm3S2TK+hJ7/t1CEmZ7jXw+pg==}
+    engines: {node: '>=18.0.0'}
 
   expand-template@2.0.3:
     resolution: {integrity: sha512-XYfuKMvj4O35f/pOXLObndIRvyQ+/+6AhODh+OKWj9S9498pHHn/IMszH+gt0fBCRWMNfk1ZSp5x3AifmnI2vg==}
@@ -3154,7 +3154,7 @@ snapshots:
     dependencies:
       '@ai-sdk/provider': 2.0.0
       '@standard-schema/spec': 1.0.0
-      eventsource-parser: 3.0.5
+      eventsource-parser: 3.0.6
       zod: 4.0.8
 
   '@ai-sdk/provider@2.0.0':
@@ -4808,7 +4808,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  eventsource-parser@3.0.5: {}
+  eventsource-parser@3.0.6: {}
 
   expand-template@2.0.3: {}
 
