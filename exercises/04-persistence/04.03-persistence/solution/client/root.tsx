@@ -4,7 +4,7 @@ import {
   QueryClientProvider,
   useSuspenseQuery,
 } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import React, { startTransition, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import type { DB } from '../api/persistence-layer.ts';
 import { ChatInput, Message, Wrapper } from './components.tsx';
@@ -55,18 +55,22 @@ const App = () => {
         onChange={(e) => setInput(e.target.value)}
         onSubmit={(e) => {
           e.preventDefault();
-          sendMessage({
-            text: input,
+
+          startTransition(() => {
+            sendMessage({
+              text: input,
+            });
+            setInput('');
+
+            if (chatIdFromSearchParams) {
+              return;
+            }
+
+            setSearchParams({ chatId: backupChatId });
+
+            // Refresh the backup chat id
+            setBackupChatId(crypto.randomUUID());
           });
-          setInput('');
-
-          if (chatIdFromSearchParams) {
-            return;
-          }
-
-          // Refresh the backup chat id
-          setBackupChatId(crypto.randomUUID());
-          setSearchParams({ chatId: backupChatId });
         }}
       />
     </Wrapper>
