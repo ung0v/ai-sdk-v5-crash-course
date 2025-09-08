@@ -1,4 +1,4 @@
-The pattern we saw established in [guardrails](/exercises/08-advanced-patterns/08.01-guardrails/problem/readme.md), where we add an extra LLM call before the main LLM call, can be used for many interesting applications.
+The pattern we saw established in [guardrails](/exercises/09-advanced-patterns/09.01-guardrails/problem/readme.md), where we add an extra LLM call before the main LLM call, can be used for many interesting applications.
 
 One powerful implementation is a model router.
 
@@ -30,7 +30,7 @@ Since this routing needs to run as quickly as possible, we'll use the same techn
 - Return 0 for the basic model
 - Return 1 for the advanced model
 
-I recommend you use the prompt template we covered in an earlier [section](/exercises/04-context-engineering/04.01-the-template/explainer/readme.md).
+I recommend you use the prompt template we covered in an earlier [section](/exercises/05-context-engineering/05.01-the-template/explainer/readme.md).
 
 The output format section will be especially important - as will the rules, which will dictate which model to use under which circumstances.
 
@@ -88,7 +88,7 @@ Inside the Message component, we can check for the `model` property and display 
 }
 ```
 
-So all you need to do is handle passing the model to the message metadata inside `createUIMessageStream`. The previous exercise on [message metadata](/exercises/06-streaming/06.03-message-metadata/problem/readme.md) will be helpful.
+So all you need to do is handle passing the model to the message metadata inside `createUIMessageStream`. The previous exercise on [message metadata](/exercises/07-streaming/07.03-message-metadata/problem/readme.md) will be helpful.
 
 ## Testing
 
