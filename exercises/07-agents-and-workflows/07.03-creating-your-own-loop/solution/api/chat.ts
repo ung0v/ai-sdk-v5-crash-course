@@ -44,6 +44,10 @@ export const POST = async (req: Request): Promise<Response> => {
 
   const stream = createUIMessageStream<MyMessage>({
     execute: async ({ writer }) => {
+      writer.write({
+        type: 'start',
+      });
+
       let step = 0;
       let mostRecentDraft = '';
       let mostRecentFeedback = '';

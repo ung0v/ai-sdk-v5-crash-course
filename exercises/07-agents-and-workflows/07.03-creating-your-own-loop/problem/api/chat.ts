@@ -48,6 +48,10 @@ export const POST = async (req: Request): Promise<Response> => {
 
   const stream = createUIMessageStream<MyMessage>({
     execute: async ({ writer }) => {
+      writer.write({
+        type: 'start',
+      });
+
       let step = TODO; // TODO: keep track of the step we're on
       let mostRecentDraft = TODO; // TODO: keep track of the most recent draft
       let mostRecentFeedback = TODO; // TODO: keep track of the most recent feedback
@@ -128,7 +132,11 @@ export const POST = async (req: Request): Promise<Response> => {
         `,
       });
 
-      writer.merge(finalSlackAttempt.toUIMessageStream());
+      writer.merge(
+        finalSlackAttempt.toUIMessageStream({
+          sendStart: false,
+        }),
+      );
     },
   });
 

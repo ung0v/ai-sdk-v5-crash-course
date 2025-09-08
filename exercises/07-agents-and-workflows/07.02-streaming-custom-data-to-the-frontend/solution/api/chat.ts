@@ -49,6 +49,9 @@ export const POST = async (req: Request): Promise<Response> => {
 
   const stream = createUIMessageStream<MyMessage>({
     execute: async ({ writer }) => {
+      writer.write({
+        type: 'start',
+      });
       // Write Slack message
       const writeSlackResult = streamText({
         model: google('gemini-2.0-flash-001'),
@@ -116,7 +119,11 @@ export const POST = async (req: Request): Promise<Response> => {
         `,
       });
 
-      writer.merge(finalSlackAttempt.toUIMessageStream());
+      writer.merge(
+        finalSlackAttempt.toUIMessageStream({
+          sendStart: false,
+        }),
+      );
     },
   });
 
