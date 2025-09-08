@@ -17,14 +17,6 @@ const exemplars = [
 const result = await streamText({
   model: google('gemini-2.0-flash-lite'),
   prompt: `
-    <task-context>
-    You are a helpful assistant that can generate titles for conversations.
-    </task-context>
-    
-    <rules>
-    Titles should be at most 30 characters.
-    </rules>
-
     <examples>
       ${exemplars
         .map(
@@ -46,10 +38,6 @@ const result = await streamText({
     <the-ask>
     Generate a title for the conversation.
     </the-ask>
-
-    <output-format>
-    Return only the title.
-    </output-format>
   `,
 });
 
