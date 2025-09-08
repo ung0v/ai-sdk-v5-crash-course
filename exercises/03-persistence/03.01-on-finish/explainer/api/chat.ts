@@ -7,23 +7,23 @@ import {
 
 export const POST = async (req: Request): Promise<Response> => {
   const body: { messages: UIMessage[] } = await req.json();
-  const { messages: messagesFromBody } = body;
+  const { messages } = body;
 
   const result = streamText({
     model: google('gemini-2.0-flash'),
-    messages: convertToModelMessages(messagesFromBody),
-    // onFinish: ({ response }) => {
-    //   // 'response.messages' is an array of ToolModelMessage and AssistantModelMessage,
-    //   // which are the model messages that were generated during the stream.
-    //   // This is useful if you don't need UIMessages - for simpler applications.
-    //   console.log('streamText.onFinish');
-    //   console.log('  response.messages');
-    //   console.dir(response.messages, { depth: null });
-    // },
+    messages: convertToModelMessages(messages),
+    onFinish: ({ response }) => {
+      // 'response.messages' is an array of ToolModelMessage and AssistantModelMessage,
+      // which are the model messages that were generated during the stream.
+      // This is useful if you don't need UIMessages - for simpler applications.
+      console.log('streamText.onFinish');
+      console.log('  response.messages');
+      console.dir(response.messages, { depth: null });
+    },
   });
 
   return result.toUIMessageStreamResponse({
-    originalMessages: messagesFromBody,
+    originalMessages: messages,
     onFinish: ({ messages, responseMessage }) => {
       // 'messages' is the full message history, including the original messages
       // you pass in to originalMessages.

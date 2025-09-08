@@ -47,13 +47,6 @@ Good luck, and I'll see you in the solution!
 
 ## Steps To Complete
 
-- [ ] Test the default behavior of the `useChat` hook by:
-  - Running the local dev server
-  - Navigating to `localhost:3000`
-  - Sending a message
-  - Checking the network tab to see that the `id` is being sent to the API
-  - Checking the server console logs to see that the `id` is being received
-
 - [ ] Extract the `chatId` from search parameters using `searchParams.get('chatId')`
 
 - [ ] Pass the `chatId` to the `useChat` hook's options object (check the [docs](https://ai-sdk.dev/docs/ai-sdk-ui/chatbot-message-persistence#loading-an-existing-chat) for more information)
