@@ -13,12 +13,19 @@ const tokenize = (text: string) => {
 
 const tokensInCache = tokenize(
   // NOTE: Change this to change what's in the cache
-  `The quick brown fox jumps over the lazy dog`,
+  [
+    'User: What is the capital of France?',
+    'Assistant: Paris',
+  ].join('\n'),
 );
 
 const inputTokens = tokenize(
   // NOTE: Change this to change what the input is
-  `The quick brown fox jumps over the lazy dog. What a brilliant story.`,
+  [
+    'User: What is the capital of France?',
+    'Assistant: Paris',
+    'User: What is the capital of Germany?',
+  ].join('\n'),
 );
 
 let numberOfMatchingTokens = 0;
