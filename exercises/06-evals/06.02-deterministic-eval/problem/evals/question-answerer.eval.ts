@@ -52,7 +52,7 @@ evalite('TS Release Notes', {
   ],
   task: async (input) => {
     const capitalResult = await generateText({
-      model: google('gemini-1.5-flash'),
+      model: google('gemini-2.0-flash-lite'),
       prompt: `
         You are a helpful assistant that can answer questions about TypeScript releases.
 
