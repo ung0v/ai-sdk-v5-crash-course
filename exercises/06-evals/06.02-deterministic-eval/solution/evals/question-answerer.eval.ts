@@ -41,7 +41,7 @@ const links = [
   },
 ];
 
-evalite('Capitals', {
+evalite('TS Release Notes', {
   data: () => [
     {
       input: 'Tell me about the TypeScript 5.8 release',
