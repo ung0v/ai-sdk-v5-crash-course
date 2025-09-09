@@ -42,7 +42,7 @@ const result = streamText({
     </the-ask>
 
     <thinking-instructions>
-      Think about your answer first before you respond. Consider the optimal path for the user to understand the code.
+      Think about your answer first before you respond. Consider the optimal path for the user to understand the code. Consider all of the knowledge dependencies - the pieces of knowledge that rely on other pieces of knowledge. Assume the user knows very little about TypeScript. Create a list of the pieces of knowledge that the user needs to know, in order of dependency.
     </thinking-instructions>
 
     <output-format>
