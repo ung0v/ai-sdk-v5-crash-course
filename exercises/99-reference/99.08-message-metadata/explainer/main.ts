@@ -27,6 +27,9 @@ const stream = streamTextResult.toUIMessageStream<MyMessage>({
       };
     }
   },
+  onFinish: ({ responseMessage }) => {
+    console.log(responseMessage.metadata);
+  },
 });
 
 for await (const chunk of stream) {
