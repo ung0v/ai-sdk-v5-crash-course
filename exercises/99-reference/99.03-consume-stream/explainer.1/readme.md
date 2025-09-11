@@ -161,7 +161,7 @@ Good luck and I will see you in the next one.
 
 - [ ] Study the [`explainer.2`](../explainer.2/main.ts) example that uses the top-level `consumeStream()` function with `toUIMessageStream()` to accomplish the same goal.
 
-- [ ] Try running both examples by running `pnpm run exercise`
+- [ ] Try running both examples by running `pnpm run dev`
 
 - [ ] Experiment by commenting out the `consumeStream` lines in both examples to observe how the `onFinish` callback doesn't execute.
 
