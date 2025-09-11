@@ -33,7 +33,7 @@ evalite('Chat Title Generation', {
     const result = await generateText({
       model: google('gemini-2.0-flash-lite'),
       prompt: `
-        You are a helpful assistant that can generate titles for conversations.
+        You are a helpful assistant that can generate titles for conversations. The title will be used for organizing conversations in a chat application.
 
         <conversation-history>
         ${input}
@@ -46,8 +46,7 @@ evalite('Chat Title Generation', {
         If there are acronyms used in the conversation, use them in the title.
         Use formal language in the title, like 'troubleshooting', 'discussion', 'support', 'options', 'research', etc.
         Since all items in the list are conversations, do not use the word 'chat', 'conversation' or 'discussion' in the title - it's implied by the UI.
-        The title will be used for organizing conversations in a chat application.
-
+        
         Generate a title for the conversation.
         Return only the title.
       `,

@@ -30,7 +30,7 @@ export const attributionToChainOfThoughtPaper = createScorer<
   string
 >({
   name: 'Attribution',
-  scorer: async ({ input, output, expected }) => {
+  scorer: async ({ input, output }) => {
     const result = await generateObject({
       model: google('gemini-2.0-flash'),
       system: ATTRIBUTION_PROMPT,
