@@ -54,8 +54,6 @@ We need to:
 - If the `streamObject` call says we should break out of the loop, we should do so
 - Stream the feedback to the frontend as it appears
 
-The way that `streamObject` works is a little esoteric, so I've provided a little bit of reference material which I will link to below.
-
 Good luck, and I'll see you in the solution.
 
 ## Steps To Complete
@@ -70,7 +68,7 @@ Good luck, and I'll see you in the solution.
   - A feedback string
   - A boolean indicating if the draft is good enough
 
-- [ ] Update the code to stream the feedback to the frontend as it appears in the `partialObjectStream`. Check out the [reference material](/exercises/99-reference/99.07-stream-object-partial-object-stream/explainer/readme.md) for more information on partial object streams.
+- [ ] Update the code to stream the feedback to the frontend as it appears in the `partialObjectStream`. Return to the [exercise on streamObject](/exercises/01-ai-sdk-basics/01.09-streaming-objects/problem/readme.md) for a reminder.
 
 - [ ] Modify the loop to break early if the LLM indicates the draft is good enough
 
