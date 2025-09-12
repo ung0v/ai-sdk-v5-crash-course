@@ -1,6 +1,6 @@
-import React, { type ReactNode } from 'react';
-import type { MyMessage } from '../api/chat.ts';
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import type { MyMessage } from '../api/chat.ts';
 
 export const Wrapper = (props: {
   children: React.ReactNode;
@@ -43,20 +43,21 @@ export const Message = ({
         );
       }
 
+      if (part.type === 'text') {
+        return (
+          <div className="mb-4">
+            <p className="text-gray-400 text-xs">
+              <ReactMarkdown>
+                {(role === 'user' ? 'User: ' : 'AI: ') +
+                  part.text}
+              </ReactMarkdown>
+            </p>
+          </div>
+        );
+      }
+
       return null;
     })}
-
-    <ReactMarkdown>
-      {(role === 'user' ? 'User: ' : 'AI: ') +
-        parts
-          .map((part) => {
-            if (part.type === 'text') {
-              return part.text;
-            }
-            return '';
-          })
-          .join('')}
-    </ReactMarkdown>
   </div>
 );
 

@@ -1,7 +1,7 @@
 Our workflow is working pretty nicely. We're getting some decent output, but our user is not seeing anything on their screen for a significant amount of time. That's because we are using `generateText` here.
 
 ```ts
-// Current code using [`generateText`](./api/chat.ts)
+// Current code using generateText
 const writeSlackResult = await generateText({
   model: google('gemini-2.0-flash-001'),
   system: WRITE_SLACK_MESSAGE_FIRST_DRAFT_SYSTEM,
@@ -77,9 +77,7 @@ And again, there's examples for all of these things in the reference material, w
 
 - [ ] Update the API to use `streamText` instead of `generateText` for the first draft and evaluation
 
-- [ ] Create a `createUIMessageStream` to manage the writing of messages and data parts. Check the [reference material](/exercises/99-reference/99.05-custom-data-parts-stream-to-frontend/explainer/readme.md) to understand how to do this.
-
-- [ ] Use the `writer.write()` method to add custom data parts to the stream as they're generated
+- [ ] Use the `writer.write()` method to add custom data parts to the stream as they're generated. Check the [reference material](/exercises/99-reference/99.05-custom-data-parts-stream-to-frontend/explainer/readme.md) to understand how to do this.
 
 - [ ] Ensure that all the data parts are written with consistent ids. Check out the [reference material](/exercises/99-reference/99.06-custom-data-parts-id-reconciliation/explainer/readme.md) to understand how to do this.
 

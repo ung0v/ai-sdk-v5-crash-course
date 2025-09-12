@@ -1,4 +1,4 @@
-import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
+import type { UIMessage } from 'ai';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
@@ -19,24 +19,31 @@ export const Message = ({
   parts,
 }: {
   role: string;
-  parts: UIMessagePart<UIDataTypes, UITools>[];
-}) => {
-  const prefix = role === 'user' ? 'User: ' : 'AI: ';
+  parts: UIMessage['parts'];
+}) => (
+  <div className="my-4">
+    {parts.map((part) => {
+      // TODO: use this component to handle the custom data parts
+      // you have created in the api/chat.ts file
+      TODO;
 
-  const text = parts
-    .map((part) => {
       if (part.type === 'text') {
-        return part.text;
+        return (
+          <div className="mb-4">
+            <p className="text-gray-400 text-xs">
+              <ReactMarkdown>
+                {(role === 'user' ? 'User: ' : 'AI: ') +
+                  part.text}
+              </ReactMarkdown>
+            </p>
+          </div>
+        );
       }
-      return '';
-    })
-    .join('');
-  return (
-    <div className="prose prose-invert my-6">
-      <ReactMarkdown>{prefix + text}</ReactMarkdown>
-    </div>
-  );
-};
+
+      return null;
+    })}
+  </div>
+);
 
 export const ChatInput = ({
   input,
