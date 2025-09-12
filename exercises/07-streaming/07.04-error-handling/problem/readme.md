@@ -45,7 +45,7 @@ If we can't identify the error using `RetryError.isInstance`, then we're going t
 
 Once that's all hooked up, it's now time to actually show it in the front end. Here's the [`App` component](./client/root.tsx):
 
-```typescript
+```tsx
 const App = () => {
   // TODO: Destructure the error property returned from the useChat hook
   const { messages, sendMessage } = useChat({});
@@ -85,7 +85,7 @@ Our first job is to go into `useChat` and destructure out the property of `error
 
 We have a component below called `ErrorMessage` which will just show the message with a nice little lucid icon:
 
-```typescript
+```tsx
 const ErrorMessage = ({ error }: { error: Error }) => {
   return (
     <div className="flex items-center gap-2 p-3 mb-4 text-red-300 bg-red-900/20 border border-red-500/30 rounded-lg">
