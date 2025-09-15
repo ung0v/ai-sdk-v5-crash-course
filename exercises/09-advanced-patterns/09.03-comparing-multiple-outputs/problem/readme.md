@@ -169,7 +169,7 @@ Try it on some math questions or content generation tasks! Good luck, and I'll s
 
 ## Steps To Complete
 
-- [ ] Define the data output type in the `MyMessage` type
+- [ ] Define the `data-output` type in the `MyMessage` type
   - Add `model: string` and `text: string` properties
 
 - [ ] Implement the `streamModelText` function
