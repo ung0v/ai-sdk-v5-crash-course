@@ -105,7 +105,7 @@ export const POST = async (req: Request): Promise<Response> => {
   const stream = createUIMessageStream<MyMessage>({
     execute: async ({ writer }) => {
       const queriesResult =
-        await generateQueriesForTavily(modelMessages);
+        generateQueriesForTavily(modelMessages);
 
       await displayQueriesInFrontend(queriesResult, writer);
 

@@ -20,7 +20,9 @@ export type MyMessage = UIMessage<
   }
 >;
 
-const getQueries = (modelMessages: ModelMessage[]) => {
+const generateQueriesForTavily = (
+  modelMessages: ModelMessage[],
+) => {
   const queriesResult = streamObject({
     model: google('gemini-2.0-flash'),
     system: `
@@ -50,7 +52,7 @@ const getQueries = (modelMessages: ModelMessage[]) => {
 };
 
 const streamQueriesToFrontend = async (
-  queriesResult: ReturnType<typeof getQueries>,
+  queriesResult: ReturnType<typeof generateQueriesForTavily>,
   writer: UIMessageStreamWriter<MyMessage>,
 ) => {
   const queriesPartId = crypto.randomUUID();
@@ -78,7 +80,9 @@ const streamQueriesToFrontend = async (
   }
 };
 
-const getSearchResults = async (queries: string[]) => {
+const callTavilyToGetSearchResults = async (
+  queries: string[],
+) => {
   const tavilyClient = tavily({
     apiKey: process.env.TAVILY_API_KEY,
   });
@@ -99,8 +103,10 @@ const getSearchResults = async (queries: string[]) => {
   return searchResults;
 };
 
-const streamFinalResponse = async (
-  searchResults: Awaited<ReturnType<typeof getSearchResults>>,
+const streamFinalSummary = async (
+  searchResults: Awaited<
+    ReturnType<typeof callTavilyToGetSearchResults>
+  >,
   messages: ModelMessage[],
   writer: UIMessageStreamWriter<MyMessage>,
 ) => {
@@ -164,15 +170,16 @@ export const POST = async (req: Request): Promise<Response> => {
 
   const stream = createUIMessageStream<MyMessage>({
     execute: async ({ writer }) => {
-      const queriesResult = await getQueries(modelMessages);
+      const queriesResult =
+        generateQueriesForTavily(modelMessages);
 
       await streamQueriesToFrontend(queriesResult, writer);
 
-      const searchResults = await getSearchResults(
+      const searchResults = await callTavilyToGetSearchResults(
         (await queriesResult.object).queries,
       );
 
-      await streamFinalResponse(
+      await streamFinalSummary(
         searchResults,
         modelMessages,
         writer,
