@@ -45,13 +45,10 @@ export const Message = ({
 
       if (part.type === 'text') {
         return (
-          <div className="mb-4">
-            <p className="text-gray-400 text-xs">
-              <ReactMarkdown>
-                {(role === 'user' ? 'User: ' : 'AI: ') +
-                  part.text}
-              </ReactMarkdown>
-            </p>
+          <div className="mb-4 text-white">
+            <ReactMarkdown>
+              {(role === 'user' ? 'User: ' : 'AI: ') + part.text}
+            </ReactMarkdown>
           </div>
         );
       }

@@ -52,6 +52,7 @@ export const POST = async (req: Request): Promise<Response> => {
       writer.write({
         type: 'start',
       });
+
       // Write Slack message
       const writeSlackResult = streamText({
         model: google('gemini-2.0-flash-001'),
