@@ -51,7 +51,7 @@ export const Message = ({
         return (
           <div className="prose prose-invert">
             <ReactMarkdown>
-              {role === 'user' ? 'User: ' : 'AI: ' + part.text}
+              {(role === 'user' ? 'User: ' : 'AI: ') + part.text}
             </ReactMarkdown>
           </div>
         );
