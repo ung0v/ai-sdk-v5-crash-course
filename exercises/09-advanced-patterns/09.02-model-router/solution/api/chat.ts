@@ -70,10 +70,12 @@ export const POST = async (req: Request): Promise<Response> => {
 
       writer.merge(
         streamTextResult.toUIMessageStream({
-          messageMetadata: () => {
-            return {
-              model: modelSelected,
-            };
+          messageMetadata: ({ part }) => {
+            if (part.type === 'start') {
+              return {
+                model: modelSelected,
+              };
+            }
           },
         }),
       );
