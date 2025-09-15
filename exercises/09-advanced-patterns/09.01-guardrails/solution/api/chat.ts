@@ -45,7 +45,7 @@ export const POST = async (req: Request): Promise<Response> => {
         writer.write({
           type: 'text-delta',
           id: textPartId,
-          delta: guardrailResult.text,
+          delta: `We're sorry, but we can't process your request.`,
         });
 
         writer.write({
