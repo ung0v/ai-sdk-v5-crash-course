@@ -105,8 +105,9 @@ export const POST = async (req: Request): Promise<Response> => {
           schema: z.object({
             feedback: z
               .string()
+              .optional()
               .describe(
-                'The feedback about the most recent draft.',
+                'The feedback about the most recent draft. Only return this if the draft is not good enough.',
               ),
             isGoodEnough: z
               .boolean()
@@ -134,6 +135,10 @@ export const POST = async (req: Request): Promise<Response> => {
         // If the draft is good enough, break the loop
         if (finalEvaluationObject.isGoodEnough) {
           break;
+        }
+
+        if (!finalEvaluationObject.feedback) {
+          throw new Error('No feedback provided by the LLM.');
         }
 
         mostRecentFeedback = finalEvaluationObject.feedback;
