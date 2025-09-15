@@ -26,7 +26,7 @@ const writeTextPart = (
 };
 ```
 
-If you don't know what this code does, then there's [other reference material](/exercises/99-reference/99.10-streaming-text-parts-by-hand/explainer/readme.md) that explains it.
+If you don't know what this code does, then there's [other reference material](/exercises/99-reference/99.08-streaming-text-parts-by-hand/explainer/readme.md) that explains it.
 
 ## The Issue with Multiple Streams
 

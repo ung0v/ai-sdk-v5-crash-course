@@ -101,7 +101,7 @@ In fact, we want to manually start it ourselves, by following the `TODO` at the 
 TODO;
 ```
 
-I've got some [reference material](/exercises/99-reference/99.11-start-and-finish-parts/explainer/readme.md) that explains this in more detail.
+I've got some [reference material](/exercises/99-reference/99.09-start-and-finish-parts/explainer/readme.md) that explains this in more detail.
 
 ## Frontend Changes
 
@@ -168,7 +168,7 @@ Once all these changes are done, you should see each part of the workflow stream
 - [ ] Replace all instances of `UIMessage` with `MyMessage` in the code
 
 - [ ] Update the execute function in api/chat.ts
-  - Add code to write a `{ type: 'start' }` message via writer.write. Check out the [reference material](/exercises/99-reference/99.11-start-and-finish-parts/explainer/readme.md) to understand why we do this.
+  - Add code to write a `{ type: 'start' }` message via writer.write. Check out the [reference material](/exercises/99-reference/99.09-start-and-finish-parts/explainer/readme.md) to understand why we do this.
   - Change both `generateText` calls to `streamText` and stream to frontend as custom data parts. Check out the [reference material](/exercises/99-reference/99.06-custom-data-parts-id-reconciliation/explainer/readme.md) to understand how to do this.
 
 - [ ] Handle the final Slack attempt stream
