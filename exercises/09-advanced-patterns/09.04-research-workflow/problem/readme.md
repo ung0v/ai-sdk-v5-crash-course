@@ -161,9 +161,9 @@ const [input, setInput] = useState(
 
 ## Steps To Complete
 
-- [ ] Set up your Tavily API key
+- [ ] Set up your Tavily API key (if you haven't already)
   - Sign up at [Tavily](https://tavily.com/)
-  - Add your API key to the environment variables
+  - Add your API key to the environment variables under `TAVILY_API_KEY`
 
 - [ ] Implement `generateQueriesForTavily` function
   - Use `streamObject` to generate a plan and queries
