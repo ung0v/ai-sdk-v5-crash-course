@@ -1,7 +1,43 @@
-Our workflow is working pretty nicely. We're getting some decent output, but our user is not seeing anything on their screen for a significant amount of time. That's because we are using `generateText` here.
+Our workflow is working pretty nicely. We're getting some decent outputs, but the user is not seeing anything on the screen for a considerable length of time. That's because we are using `generateText` instead of `streamText`.
 
-```ts
-// Current code using generateText
+We're going to change this to use `streamText`, and we're also going to get some practice in doing some custom data parts.
+
+We want to:
+
+1. Stream the first draft to the front end
+2. Stream the evaluation separately
+3. Display these distinct from each other in the front end
+
+## The Setup
+
+I've added some necessary scaffolding inside [./api/chat](./api/chat.ts):
+
+- Created a `createUIMessageStream` with a `MyMessage` type
+- Set up a way to turn that stream into a `UIMessageStreamResponse`
+
+## Declare Custom Data Parts
+
+Your first job is to declare custom data parts:
+
+```typescript
+export type MyMessage = UIMessage<
+  unknown,
+  {
+    // TODO: declare custom data parts here
+  }
+>;
+```
+
+I recommend one part for the evaluation and one for the first draft. The final draft we can stream down as normal text parts.
+
+You'll need to replace all instances of `UIMessage` with `MyMessage` in this folder.
+
+## Switch from `generateText` to `streamText`
+
+Next, we need to strip out the `generateText` calls inside the execute function:
+
+```typescript
+// TODO - change to streamText and write to the stream as custom data parts
 const writeSlackResult = await generateText({
   model: google('gemini-2.0-flash-001'),
   system: WRITE_SLACK_MESSAGE_FIRST_DRAFT_SYSTEM,
@@ -10,79 +46,139 @@ const writeSlackResult = await generateText({
     ${formatMessageHistory(messages)}
   `,
 });
+
+// TODO - change to streamText and write to the stream as custom data parts
+const evaluateSlackResult = await generateText({
+  model: google('gemini-2.0-flash-001'),
+  system: EVALUATE_SLACK_MESSAGE_SYSTEM,
+  prompt: `
+    Conversation history:
+    ${formatMessageHistory(messages)}
+
+    Slack message:
+    ${writeSlackResult.text}
+  `,
+});
 ```
 
-In other words, this `await` is waiting for this entire piece of text to be generated before we can continue with the evaluation. And then only finally, when we get to the final Slack attempt, do we then start streaming the text to the user via [`toUIMessageStreamResponse`](./api/chat.ts).
+Change each of these `generateText` calls into a `streamText`. Watch the text stream and as it happens, stream that to the frontend as that data part.
 
-It would be much better if the user could see tokens on the screen faster, if we could improve our TTFT, time to first token. The way we're going to do that is via streaming some custom data parts.
+Make sure you use the ID trick so you update the same data part over time. I've got some [reference material](/exercises/99-reference/99.06-custom-data-parts-id-reconciliation/explainer/readme.md) that explains this in more detail.
 
-## Declaring A Custom Message Type
+## Handling the Stream Text Call
 
-We're going to create a custom `MyMessage` type using `UIMessage` and declare some custom data parts in here:
+The final Slack attempt is already streaming, which is good:
 
-```ts
-// TODO: Replace with this
-export type MyMessage = UIMessage<
-  unknown,
-  {
-    'slack-message': string;
-    'slack-message-feedback': string;
-  }
->;
+```typescript
+const finalSlackAttempt = streamText({
+  model: google('gemini-2.0-flash-001'),
+  system: WRITE_SLACK_MESSAGE_FINAL_SYSTEM,
+  prompt: `
+    Conversation history:
+    ${formatMessageHistory(messages)}
+
+    First draft:
+    ${writeSlackResult.text}
+
+    Previous feedback:
+    ${evaluateSlackResult.text}
+  `,
+});
+
+// TODO: merge the final slack attempt into the stream,
+// sending sendStart: false
+writer.TODO;
 ```
 
-The `slack-message` and `slack-message-feedback` keys represent the name of the data part, and the `string` type represents the _value_ of that data part.
+We need to merge it into the writer. When we merge it, we need to pass `sendStart: false`.
 
-One data part is going to represent the evaluation result and one is going to represent the first draft.
+By default, when you merge a `UIMessageStream` into another `UIMessageStream`, it will send the start and finish parts. But because we've already begun the message up above, we don't want it to send the start part again.
 
-You probably won't need to change much of this code here. As extra prep for this lesson, I recommend you check out the [reference material](/exercises/99-reference/99.04-custom-data-parts-streaming/explainer/readme.md) on streaming custom data parts, because that will tell you a few things that will help you solve these next todos.
+In fact, we want to manually start it ourselves, by following the `TODO` at the top of the `execute` function:
 
-## Passing The Custom Message Type To The Frontend
+```typescript
+// TODO: write a { type: 'start' } message via writer.write
+TODO;
+```
 
-Inside our frontend here, we definitely want to pass `MyMessage` to the [`useChat`](./client/root.tsx) hook:
+I've got some [reference material](/exercises/99-reference/99.11-start-and-finish-parts/explainer/readme.md) that explains this in more detail.
 
-```tsx
-// Change this:
+## Frontend Changes
+
+Once the backend is done, we need to go to the frontend.
+
+First, pass our `MyMessage` type to the `useChat` hook:
+
+```typescript
+// TODO: pass MyMessage to the useChat hook: useChat<MyMessage>({})
 const { messages, sendMessage } = useChat({});
-
-// To this:
-const { messages, sendMessage } = useChat<MyMessage>({});
 ```
 
-## Rendering The Custom Data Parts
-
-And we'll also want to go into the components and render the messages inside the message component. You'll need to update the [`Message`](./client/components.tsx) component to handle the custom data parts:
+Then, we'll need to adjust the message component:
 
 ```tsx
-// Message component will need to handle custom data parts
 export const Message = ({
   role,
   parts,
 }: {
   role: string;
-  parts: MyMessage['parts'];
-}) => {
-  // Add rendering for slack-message and slack-message-feedback parts
-  // ...
-};
+  parts: UIMessage['parts'];
+}) => (
+  <div className="my-4">
+    {parts.map((part) => {
+      // TODO: use this component to handle the custom data parts
+      // you have created in the api/chat.ts file
+      TODO;
+
+      if (part.type === 'text') {
+        return (
+          <div className="mb-4">
+            <p className="text-gray-400 text-xs">
+              <ReactMarkdown>
+                {(role === 'user' ? 'User: ' : 'AI: ') +
+                  part.text}
+              </ReactMarkdown>
+            </p>
+          </div>
+        );
+      }
+
+      return null;
+    })}
+  </div>
+);
 ```
 
-And again, there's examples for all of these things in the reference material, which as a generous teacher, I will link to. But good luck and I will see you in the solution.
+We'll need to render some UI to render the custom parts to the frontend.
+
+## Testing
+
+Once all these changes are done, you should see each part of the workflow streaming to the frontend. This will:
+
+1. Massively improve our time to first token
+2. Give the user full awareness over every single part of the workflow
 
 ## Steps To Complete
 
-- [ ] Check out the [reference material](/exercises/99-reference/99.04-custom-data-parts-streaming/explainer/readme.md) on streaming custom data parts. This will tell you how to update the `MyMessage` type.
+- [ ] Declare custom data parts in `MyMessage` type in api/chat.ts
+  - One for evaluation
+  - One for first draft
+  - Final draft can use normal text parts
 
-- [ ] Update the `MyMessage` type with custom data parts for 'slack-message' and 'slack-message-feedback'
+- [ ] Replace all instances of `UIMessage` with `MyMessage` in the code
 
-- [ ] Update the API to use `streamText` instead of `generateText` for the first draft and evaluation
+- [ ] Update the execute function in api/chat.ts
+  - Add code to write a `{ type: 'start' }` message via writer.write. Check out the [reference material](/exercises/99-reference/99.11-start-and-finish-parts/explainer/readme.md) to understand why we do this.
+  - Change both `generateText` calls to `streamText` and stream to frontend as custom data parts. Check out the [reference material](/exercises/99-reference/99.06-custom-data-parts-id-reconciliation/explainer/readme.md) to understand how to do this.
 
-- [ ] Use the `writer.write()` method to add custom data parts to the stream as they're generated. Check the [reference material](/exercises/99-reference/99.05-custom-data-parts-stream-to-frontend/explainer/readme.md) to understand how to do this.
+- [ ] Handle the final Slack attempt stream
+  - Merge the `finalSlackAttempt` into the writer with `sendStart: false`
 
-- [ ] Ensure that all the data parts are written with consistent ids. Check out the [reference material](/exercises/99-reference/99.06-custom-data-parts-id-reconciliation/explainer/readme.md) to understand how to do this.
+- [ ] Update the frontend components
+  - Pass `MyMessage` to the `useChat` hook in client/root.tsx
+  - Update the Message component in client/components.tsx to handle custom data parts
 
-- [ ] Update the frontend to use the custom `MyMessage` type in the `useChat` hook
-
-- [ ] Modify the `Message` component to render the custom data parts with appropriate styling. Again, the [reference material](/exercises/99-reference/99.05-custom-data-parts-stream-to-frontend/explainer/readme.md) has some tips here.
-
-- [ ] Test your implementation by running the local dev server and checking if you see the Slack message draft and feedback appearing on the screen before the final message
+- [ ] Test your implementation
+  - Run the dev server with `pnpm run dev`
+  - Check localhost:3000 in your browser
+  - Confirm you can see all parts streaming separately to the frontend
