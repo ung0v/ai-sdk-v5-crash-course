@@ -90,8 +90,6 @@ const streamFinalSummary = async (
   writer.merge(
     // NOTE: We send sendStart: false because we've already
     // sent the 'start' message part to the frontend.
-    // Without this, we'd end up with two assistant messages
-    // in the frontend.
     answerResult.toUIMessageStream({ sendStart: false }),
   );
 };
