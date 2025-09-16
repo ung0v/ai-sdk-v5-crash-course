@@ -11,11 +11,15 @@ import {
 export const POST = async (req: Request): Promise<Response> => {
   const body = await req.json();
 
-  // NOTE: We're using the validateUIMessages function to validate
-  // the messages. This is useful in any production app.
-  const messages = await validateUIMessages({
-    messages: body.messages,
-  });
+  let messages: UIMessage[];
+
+  try {
+    messages = await validateUIMessages({
+      messages: body.messages,
+    });
+  } catch (error) {
+    return new Response('Invalid messages', { status: 400 });
+  }
 
   const modelMessages: ModelMessage[] =
     convertToModelMessages(messages);
