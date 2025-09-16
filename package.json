@@ -1,8 +1,8 @@
 {
-  "name": "ai-engineering-crash-course",
+  "name": "ai-sdk-v5-crash-course",
   "version": "1.0.0",
-  "description": "Companion repository for the AI Engineering Crash Course on aihero.dev",
-  "repository": "https://github.com/ai-hero-dev/ai-engineering-crash-course",
+  "description": "Companion repository for the AI SDK v5 Crash Course on aihero.dev",
+  "repository": "https://github.com/ai-hero-dev/ai-sdk-v5-crash-course",
   "type": "module",
   "scripts": {
     "dev": "ai-hero-cli exercise",

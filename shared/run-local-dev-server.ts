@@ -18,7 +18,7 @@ const indexHtmlTemplate = `<!doctype html>
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
-    <title>AI TypeScript Toolkit</title>
+    <title>AI SDK v5 Crash Course</title>
   </head>
   <body>
     <div id="root"></div>
