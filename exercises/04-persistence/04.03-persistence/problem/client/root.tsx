@@ -37,7 +37,10 @@ const App = () => {
   // TODO: pass the chatId from the search params to the
   // useChat hook, as well as any existing messages
   // from the backend
-  const { messages, sendMessage } = useChat({});
+  const { messages, sendMessage } = useChat({
+    id: chatIdFromSearchParams || backupChatId,
+    messages: data?.messages || [],
+  });
 
   const [input, setInput] = useState(
     `Who's the best football player in the world?`,
@@ -45,7 +48,7 @@ const App = () => {
 
   return (
     <Wrapper>
-      {messages.map((message) => (
+      {messages?.map((message) => (
         <Message
           key={message.id}
           role={message.role}
@@ -66,11 +69,11 @@ const App = () => {
             });
             setInput('');
 
-            // TODO: set the search params to the new chatId
-            // if the chatId is not already set
-
-            // TODO: refresh the backup chatId
-            // if the chatId is not already set
+            if (chatIdFromSearchParams) {
+              return;
+            }
+            setSearchParams({ chatId: backupChatId });
+            setBackupChatId(crypto.randomUUID());
           });
         }}
       />

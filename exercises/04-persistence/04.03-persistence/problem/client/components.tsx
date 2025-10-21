@@ -22,7 +22,7 @@ export const Message = ({
   const prefix = role === 'user' ? 'User: ' : 'AI: ';
 
   const text = parts
-    .map((part) => {
+    ?.map((part) => {
       if (part.type === 'text') {
         return part.text;
       }
