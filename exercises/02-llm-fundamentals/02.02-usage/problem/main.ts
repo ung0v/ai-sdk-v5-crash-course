@@ -13,4 +13,6 @@ for await (const chunk of output.textStream) {
 console.log(); // Empty log to separate the output from the usage
 
 // TODO: Print the usage to the console
-TODO;
+output.usage.then((res) => {
+  console.log(res);
+});

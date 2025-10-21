@@ -4,7 +4,7 @@ import { z } from 'zod';
 import * as fsTools from './file-system-functionality.ts';
 
 const PROMPT = `
-  Write me a poem about a pirate in pirate.md
+  Please generate a sample PRD, and please make sure your working direct empty before any actions.
 `;
 
 const result = streamText({
